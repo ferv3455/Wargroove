@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "gameinfo.h"
 #include "unitmover.h"
+#include "gameprocessor.h"
 
 #include <QWidget>
 #include <QLabel>
@@ -44,6 +45,7 @@ private:
 
     // Game engine
     UnitMover *m_unitMover;      // Army unit mover
+    GameProcessor *m_processer;  // Game processer
 
     // Game widgets
     QLabel *m_tipsLabel;         // Label at the bottom of the screen

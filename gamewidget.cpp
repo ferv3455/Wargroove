@@ -33,6 +33,7 @@ GameWidget::GameWidget(QWidget *parent)
 
     // Initialize game engine
     m_unitMover = new UnitMover(m_settings, m_map, this);
+    m_processer = new GameProcessor(this);
 
     // Initialize timers
     m_graphicsTimer = new QTimer(this);
