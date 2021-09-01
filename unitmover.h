@@ -2,7 +2,6 @@
 #define UNITMOVER_H
 
 #include "settings.h"
-#include "gameinfo.h"
 #include "map.h"
 #include "block.h"
 #include "unit.h"
