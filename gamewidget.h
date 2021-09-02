@@ -31,6 +31,8 @@ public:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
 
+    void retranslate();
+
 public slots:
     void updateAll();
     void resetMedia(QMediaPlayer::State);
@@ -49,6 +51,8 @@ private:
 
     // Game widgets
     QLabel *m_tipsLabel;         // Label at the bottom of the screen
+
+    // Sound effects
     QMediaPlayer *m_mediaPlayer; // bgm player
     QMediaPlayer *m_SEPlayer;    // sound effect player
 

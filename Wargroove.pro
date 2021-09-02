@@ -18,6 +18,7 @@ SOURCES += \
     mainwidget.cpp \
     map.cpp \
     settings.cpp \
+    tipslabel.cpp \
     unit.cpp \
     unitmover.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     mainwidget.h \
     map.h \
     settings.h \
+    tipslabel.h \
     unit.h \
     unitmover.h
 

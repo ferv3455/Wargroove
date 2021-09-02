@@ -16,11 +16,7 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <item>
-    <layout class="QHBoxLayout" name="mainLayout"/>
-   </item>
-  </layout>
+  <layout class="QHBoxLayout" name="mainLayout"/>
  </widget>
  <resources/>
  <connections/>

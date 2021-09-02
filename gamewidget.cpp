@@ -15,8 +15,8 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize graphic widgets
     m_tipsLabel = ui->label;
     m_tipsLabel->setFixedHeight(80);
-    m_tipsLabel->setStyleSheet("QLabel{color:#ffffff; background-color:#292c33; padding:10px}");
-    m_tipsLabel->hide();
+    m_tipsLabel->setStyleSheet("color:#ffffff; background-color:#292c33; padding:10px;");
+//    m_tipsLabel->hide();
 
     // Initialize game data
     m_settings = new Settings(this);
@@ -94,6 +94,12 @@ void GameWidget::mouseMoveEvent(QMouseEvent *event)
 void GameWidget::wheelEvent(QWheelEvent *event)
 {
     emit mapZoomed((event->angleDelta().y() > 0 ? 1 : -1) * m_settings->m_nZoomScale, event->position());
+}
+
+void GameWidget::retranslate()
+{
+    ui->retranslateUi(this);
+    m_tipsLabel->setText(tr("Here are the tips. "));            // TODO: REFINED
 }
 
 void GameWidget::updateAll()
