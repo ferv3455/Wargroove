@@ -9,6 +9,11 @@ GameWidget::GameWidget(QWidget *parent)
       ui(new Ui::GameWidget),
       m_dragBeginPoint(0, 0)
 {
+    // Initialize cursor
+    QPixmap pixmap(":/pointer");
+    QCursor cursor(pixmap);
+    setCursor(cursor);
+
     // Initialize ui
     ui->setupUi(this);
 
@@ -19,9 +24,8 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize game data
     m_settings = new Settings(this);
     m_gameInfo = new GameInfo(this);
-
-    m_map = new Map(m_settings->m_mapSize, this, m_settings->m_nBlockSize, QPoint(100, 100));
-    m_map->loadFile(m_settings->m_mapFileName);
+    m_map = new Map(m_settings->m_mapSize, this,
+                    m_settings->m_nBlockSize, QPoint(100, 100), m_settings->m_mapFileName);
 
     // Initialize audio player
     m_mediaPlayer = new QMediaPlayer(this);
@@ -30,8 +34,7 @@ GameWidget::GameWidget(QWidget *parent)
     m_mediaPlayer->play();
 
     // Initialize game engine
-    m_unitMover = new UnitMover(m_settings, m_map, this);
-    m_processer = new GameProcessor(this);
+    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_tipsLabel, this);
 
     // Initialize timers
     m_graphicsTimer = new QTimer(this);
@@ -42,17 +45,17 @@ GameWidget::GameWidget(QWidget *parent)
     m_dynamicsTimer->start(300);
     connect(m_dynamicsTimer, &QTimer::timeout, m_map, &Map::updateDynamics);
 
-    // Connect signals and slots
+    // Connect other signals to slots
     connect(this, &GameWidget::mapMoved, m_map, &Map::adjustOffset);
-    connect(this, &GameWidget::mapZoomed, m_map, &Map::adjustScale);
+    connect(this, &GameWidget::mouseScroll, m_processer, &GameProcessor::zoomMap);
     connect(m_mediaPlayer, &QMediaPlayer::stateChanged, this, &GameWidget::resetMedia);
 
-    QVector<Block *> v;                 // WARNING: JUST FOR DEBUGGING MOVEMENTS
-    for (int i = 0; i < 10; i++)
-    {
-        v.push_back(m_map->getBlock(i + 1, i));
-    }
-    m_unitMover->moveUnit(v);
+//    QVector<Block *> v;                 // WARNING: JUST FOR DEBUGGING MOVEMENTS
+//    for (int i = 0; i < 10; i++)
+//    {
+//        v.push_back(m_map->getBlock(i + 1, i));
+//    }
+//    m_unitMover->moveUnit(v);
 }
 
 GameWidget::~GameWidget()
@@ -66,7 +69,7 @@ void GameWidget::paintEvent(QPaintEvent *event)
     QPainter *painter = new QPainter(this);
 
     m_map->paint(painter);
-    m_unitMover->paint(painter);
+    m_processer->paint(painter);
 
     delete painter;
 }
@@ -91,14 +94,12 @@ void GameWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GameWidget::wheelEvent(QWheelEvent *event)
 {
-    emit mapZoomed((event->angleDelta().y() > 0 ? 1 : -1) * m_settings->m_nZoomScale, event->position());
+    emit mouseScroll(event->angleDelta().y() > 0 ? 1 : -1, event->position());
 }
 
 void GameWidget::retranslate()
 {
     ui->retranslateUi(this);
-//    m_tipsLabel->setText(tr("Here are the tips. "));            // TODO: REFINED
-    m_tipsLabel->popup(tr("Map Scale: "));
 }
 
 void GameWidget::updateAll()

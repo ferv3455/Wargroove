@@ -45,12 +45,11 @@ private:
     GameInfo *m_gameInfo;        // Game info
     Map *m_map;                  // Game map
 
-    // Game engine
-    UnitMover *m_unitMover;      // Army unit mover
-    GameProcessor *m_processer;  // Game processer
-
     // Game widgets
     TipsLabel *m_tipsLabel;      // Label at the bottom of the screen
+
+    // Game engine
+    GameProcessor *m_processer;  // Game processer
 
     // Sound effects
     QMediaPlayer *m_mediaPlayer; // bgm player
@@ -65,7 +64,7 @@ private:
 
 signals:
     void mapMoved(QPoint);
-    void mapZoomed(int, QPointF);
+    void mouseScroll(int, QPointF);
 };
 
 #endif // GAMEWIDGET_H

@@ -1,6 +1,7 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
 
+#include <QFontDatabase>
 #include <QIcon>
 
 MainWidget::MainWidget(QWidget *parent)
@@ -9,6 +10,7 @@ MainWidget::MainWidget(QWidget *parent)
       m_gameWidget(nullptr),
       m_nTranslatorId(1)
 {
+    // Initialize translators
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages)
     {
@@ -22,6 +24,15 @@ MainWidget::MainWidget(QWidget *parent)
     m_nTranslatorNumber = m_nTranslatorId;
     m_nTranslatorId = 0;
 
+    // Initialize fonts used
+    QFontDatabase::addApplicationFont(":/fonts/pixel12.TTF");
+
+    // Initialize cursor
+    QPixmap pixmap(":/pointer");
+    QCursor cursor(pixmap);
+    setCursor(cursor);
+
+    // Initialize ui
     ui->setupUi(this);
     setWindowIcon(QIcon(":/Wargroove.png"));
 
@@ -32,6 +43,7 @@ MainWidget::MainWidget(QWidget *parent)
     m_pushButton_2->setText(tr("Show game"));
     m_pushButton_2->setGeometry(0, 30, 100, 30);
 
+    // Connect signals to slots
     connect(m_pushButton_1, &QPushButton::clicked, this, &MainWidget::retranslate);
     connect(m_pushButton_2, &QPushButton::clicked, this, &MainWidget::showGame);
 }

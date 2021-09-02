@@ -14,7 +14,8 @@ public:
     explicit Map(QSize size,
                  QObject *parent = nullptr,
                  int blockSize = 100,
-                 QPoint offset = QPoint(200, 200));
+                 QPoint offset = QPoint(200, 200),
+                 QString file = "");
     ~Map();
     void loadFile(QString filename);
 
@@ -25,16 +26,19 @@ public:
     int getDynamicsId() const;
     QPoint getCenterPosition(Block *block) const;
     int getBlockSize() const;
+    int getScale() const;
 
-    // Update after adjustments
+    // Adjust functions
+    void adjustOffset(QPoint);
+    void adjustScale(int, QPointF);
+
+    // Update after adjustments to blocks
     void updateAllBlocks() const;
 
     // Paint functions
     void paint(QPainter *painter) const;
 
 public slots:
-    void adjustOffset(QPoint);
-    void adjustScale(int, QPointF);
     void updateDynamics();
 
 private:

@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QDir>
 
-Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset)
+Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset, QString file)
     : QObject(parent),
       m_size(size),
       m_pOffset(offset),
@@ -17,6 +17,11 @@ Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset)
     for (int i = 0; i < m_size.height(); i++)
     {
         m_matrix[i] = new Block *[m_size.width()]();
+    }
+
+    if (file.size() > 0)
+    {
+        loadFile(file);
     }
 }
 
@@ -73,7 +78,8 @@ void Map::loadFile(QString filename)
     {
         m_matrix[1][i] = new Block(2, i, 1, i, this);
     }
-    for (int i = 14; i < 19; i++)
+    m_matrix[1][14] = new Block(2, 18, 1, 14, this);
+    for (int i = 14; i < 18; i++)
     {
         m_matrix[2][i] = new Block(6, i, 2, i, this);
         m_matrix[3][i] = new Block(7, i, 3, i, this);
@@ -130,6 +136,31 @@ int Map::getBlockSize() const
     return m_nBlockSize * m_nScale / 100;
 }
 
+int Map::getScale() const
+{
+    return m_nScale;
+}
+
+void Map::adjustOffset(QPoint deltaPos)
+{
+    m_pOffset += deltaPos;
+    updateAllBlocks();
+}
+
+void Map::adjustScale(int deltaScale, QPointF center)
+{
+    if ((m_nScale <= 30 && deltaScale < 0) || (m_nScale >= 150 && deltaScale > 0))
+    {
+        return;
+    }
+
+    center -= m_pOffset;            // relative position
+    QPointF deltaOffset = (deltaScale * 1.0 / m_nScale) * center;
+    m_pOffset -= deltaOffset.toPoint();
+    m_nScale += deltaScale;
+    updateAllBlocks();
+}
+
 void Map::updateAllBlocks() const
 {
     int rows = m_size.height();
@@ -176,26 +207,6 @@ void Map::paint(QPainter *painter) const
             }
         }
     }
-}
-
-void Map::adjustOffset(QPoint deltaPos)
-{
-    m_pOffset += deltaPos;
-    updateAllBlocks();
-}
-
-void Map::adjustScale(int deltaScale, QPointF center)
-{
-    if ((m_nScale <= 30 && deltaScale < 0) || (m_nScale >= 150 && deltaScale > 0))
-    {
-        return;
-    }
-
-    center -= m_pOffset;            // relative position
-    QPointF deltaOffset = (deltaScale * 1.0 / m_nScale) * center;
-    m_pOffset -= deltaOffset.toPoint();
-    m_nScale += deltaScale;
-    updateAllBlocks();
 }
 
 void Map::updateDynamics()

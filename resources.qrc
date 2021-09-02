@@ -22,6 +22,8 @@
     </qresource>
     <qresource prefix="/">
         <file>Wargroove.png</file>
+        <file>fonts/pixel12.TTF</file>
+        <file alias="pointer">image/pointer/pointer1.png</file>
     </qresource>
     <qresource prefix="/image/unit">
         <file alias="0">image/unit/soldier.png</file>

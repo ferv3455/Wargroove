@@ -13,6 +13,7 @@ TipsLabel::TipsLabel(const QString &text, QWidget *parent)
     setFont(font);
 
     setFixedHeight(80);
+    setMargin(20);
 
     // Initialize timer
     m_timer = new QTimer(this);
