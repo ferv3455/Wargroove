@@ -17,10 +17,10 @@ QImage Unit::grayImage(const QImage *image)
 }
 
 Unit::Unit(int unitId, QObject *parent)
-    : QObject(parent)
-    , m_nId(unitId)
-    , m_nDirection(0)
-    , m_bActive(true)
+    : QObject(parent),
+      m_nId(unitId),
+      m_nDirection(0),
+      m_bActive(true)
 {
     QImage img = QImage(":/image/unit/" + QString::number(m_nId));
     int w = img.width();

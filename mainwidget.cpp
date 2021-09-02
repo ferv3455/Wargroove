@@ -4,10 +4,10 @@
 #include <QIcon>
 
 MainWidget::MainWidget(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::MainWidget)
-    , m_gameWidget(nullptr)
-    , m_nTranslatorId(1)
+    : QWidget(parent),
+      ui(new Ui::MainWidget),
+      m_gameWidget(nullptr),
+      m_nTranslatorId(1)
 {
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages)
@@ -61,7 +61,11 @@ void MainWidget::retranslate()
     ui->retranslateUi(this);
     m_pushButton_1->setText(tr("Refresh"));
     m_pushButton_2->setText(tr("Show game"));
-    m_gameWidget->retranslate();
+
+    if (m_gameWidget != nullptr)
+    {
+        m_gameWidget->retranslate();
+    }
 }
 
 void MainWidget::showGame()

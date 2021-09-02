@@ -30,19 +30,6 @@
      </property>
     </spacer>
    </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <family>方正像素12</family>
-       <pointsize>16</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Here are the tips. </string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>

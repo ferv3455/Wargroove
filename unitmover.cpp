@@ -4,14 +4,14 @@
 #include <QDebug>
 
 UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
-    : QObject(parent)
-    , m_settings(settings)
-    , m_map(map)
-    , m_nCurrentMove(0)
-    , m_movingBlock{nullptr, nullptr}
-    , m_movingUnit(nullptr)
-    , m_bMoving(false)
-    , m_movingRoute()
+    : QObject(parent),
+      m_settings(settings),
+      m_map(map),
+      m_nCurrentMove(0),
+      m_movingBlock{nullptr, nullptr},
+      m_movingUnit(nullptr),
+      m_bMoving(false),
+      m_movingRoute()
 {
     m_nTotalMoves = m_settings->m_nMoveTime / m_settings->m_nRefreshTime;
 

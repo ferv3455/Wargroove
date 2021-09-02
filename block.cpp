@@ -13,14 +13,14 @@ QVector<QPointF> Block::sm_pbasePoints =
 };
 
 Block::Block(int terrain, int unit, int row, int col, QObject *parent)
-    : QObject(parent)
-    , m_area()
-    , m_center()
-    , m_nBlockSize(0)
-    , m_terrain(terrain)
-    , m_terrainImage(":/image/terrain/" + QString::number(m_terrain))
-    , m_row(row)
-    , m_col(col)
+    : QObject(parent),
+      m_area(),
+      m_center(),
+      m_nBlockSize(0),
+      m_terrain(terrain),
+      m_terrainImage(":/image/terrain/" + QString::number(m_terrain)),
+      m_row(row),
+      m_col(col)
 {
     if (unit >= 0)
     {

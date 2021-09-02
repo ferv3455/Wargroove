@@ -6,9 +6,9 @@
 #include "gameinfo.h"
 #include "unitmover.h"
 #include "gameprocessor.h"
+#include "tipslabel.h"
 
 #include <QWidget>
-#include <QLabel>
 #include <QTimer>
 #include <QtMultimedia/QMediaPlayer>
 
@@ -50,7 +50,7 @@ private:
     GameProcessor *m_processer;  // Game processer
 
     // Game widgets
-    QLabel *m_tipsLabel;         // Label at the bottom of the screen
+    TipsLabel *m_tipsLabel;      // Label at the bottom of the screen
 
     // Sound effects
     QMediaPlayer *m_mediaPlayer; // bgm player

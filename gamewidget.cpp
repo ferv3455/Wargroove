@@ -5,18 +5,16 @@
 #include <QMouseEvent>
 
 GameWidget::GameWidget(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::GameWidget)
-    , m_dragBeginPoint(0, 0)
+    : QWidget(parent),
+      ui(new Ui::GameWidget),
+      m_dragBeginPoint(0, 0)
 {
     // Initialize ui
     ui->setupUi(this);
 
     // Initialize graphic widgets
-    m_tipsLabel = ui->label;
-    m_tipsLabel->setFixedHeight(80);
-    m_tipsLabel->setStyleSheet("color:#ffffff; background-color:#292c33; padding:10px;");
-//    m_tipsLabel->hide();
+    m_tipsLabel = new TipsLabel(tr("Here are the tips. "), this);
+    ui->verticalLayout->addWidget(m_tipsLabel);
 
     // Initialize game data
     m_settings = new Settings(this);
@@ -99,7 +97,8 @@ void GameWidget::wheelEvent(QWheelEvent *event)
 void GameWidget::retranslate()
 {
     ui->retranslateUi(this);
-    m_tipsLabel->setText(tr("Here are the tips. "));            // TODO: REFINED
+//    m_tipsLabel->setText(tr("Here are the tips. "));            // TODO: REFINED
+    m_tipsLabel->popup(tr("Map Scale: "));
 }
 
 void GameWidget::updateAll()

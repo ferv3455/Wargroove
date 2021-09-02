@@ -9,9 +9,14 @@
         <translation>游戏窗口</translation>
     </message>
     <message>
-        <location filename="gamewidget.ui" line="42"/>
+        <location filename="gamewidget.cpp" line="16"/>
         <source>Here are the tips. </source>
-        <translation>此处显示提示。</translation>
+        <translation>此处显示提示。 </translation>
+    </message>
+    <message>
+        <location filename="gamewidget.cpp" line="101"/>
+        <source>Map Scale: </source>
+        <translation>地图缩放比例: </translation>
     </message>
 </context>
 <context>
@@ -23,11 +28,13 @@
     </message>
     <message>
         <location filename="mainwidget.cpp" line="29"/>
+        <location filename="mainwidget.cpp" line="62"/>
         <source>Refresh</source>
         <translation>更新翻译</translation>
     </message>
     <message>
         <location filename="mainwidget.cpp" line="32"/>
+        <location filename="mainwidget.cpp" line="63"/>
         <source>Show game</source>
         <translation>显示游戏</translation>
     </message>

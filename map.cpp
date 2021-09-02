@@ -6,12 +6,12 @@
 #include <QDir>
 
 Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset)
-    : QObject(parent)
-    , m_size(size)
-    , m_pOffset(offset)
-    , m_nDynamicsId(0)
-    , m_nBlockSize(blockSize)
-    , m_nScale(100)
+    : QObject(parent),
+      m_size(size),
+      m_pOffset(offset),
+      m_nDynamicsId(0),
+      m_nBlockSize(blockSize),
+      m_nScale(100)
 {
     m_matrix = new Block **[m_size.height()];
     for (int i = 0; i < m_size.height(); i++)

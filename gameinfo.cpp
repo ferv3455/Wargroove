@@ -5,10 +5,10 @@
 #include <QDebug>
 
 GameInfo::GameInfo(QObject *parent)
-    : QObject(parent)
-    , m_nTerrainNumber(9)
-    , m_nUnitType(5)
-    , m_nUnitNumber(21)
+    : QObject(parent),
+      m_nTerrainNumber(9),
+      m_nUnitType(5),
+      m_nUnitNumber(21)
 {
     // Initialize terrain info
     m_terrainInfo = new int *[m_nTerrainNumber + 1];
