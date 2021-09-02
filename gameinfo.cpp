@@ -81,14 +81,13 @@ void GameInfo::loadFile()
         }
     }
 
-    qDebug() << "Terrain info loaded";
     data.close();
 
     // Unit info
-    QFile data2(":/gameinfo/gameinfo/unit_info.txt");
-    if (!data2.open(QIODevice::ReadOnly | QIODevice::Text))
+    data.setFileName(":/gameinfo/gameinfo/unit_info.txt");
+    if (!data.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
-    in.setDevice(&data2);
+    in.setDevice(&data);
 
     sizeStr = in.readLine().split(" ");
     if (sizeStr[0].toInt() != m_nUnitNumber)
@@ -111,8 +110,7 @@ void GameInfo::loadFile()
         }
     }
 
-    qDebug() << "Unit info loaded";
-    data2.close();
+    data.close();
 
     // Damage matrix
     data.setFileName(":/gameinfo/gameinfo/damage_matrix.txt");
@@ -141,8 +139,9 @@ void GameInfo::loadFile()
         }
     }
 
-    qDebug() << "Damage matrix loaded";
     data.close();
+
+    qDebug() << "Game Info loaded";
 }
 
 int **GameInfo::getTerrainInfo() const

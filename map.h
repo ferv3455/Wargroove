@@ -24,13 +24,14 @@ public:
     Block *getBlock(QPoint position) const;
     QSize getSize() const;
     int getDynamicsId() const;
-    QPoint getCenterPosition(Block *block) const;
+    QPoint getCenterPosition(const Block *block) const;
     int getBlockSize() const;
     int getScale() const;
+    void getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) const;
 
     // Adjust functions
-    void adjustOffset(QPoint);
-    void adjustScale(int, QPointF);
+    void adjustOffset(QPoint deltaPos);
+    void adjustScale(int deltaScale, QPointF center);
 
     // Update after adjustments to blocks
     void updateAllBlocks() const;

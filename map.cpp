@@ -3,7 +3,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-#include <QDir>
 
 Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset, QString file)
     : QObject(parent),
@@ -103,7 +102,43 @@ Block *Map::getBlock(int row, int col) const
 
 Block *Map::getBlock(QPoint position) const
 {
-    Q_UNUSED(position);             // TODO: REDEFINED
+    int newBlockSize = m_nBlockSize * m_nScale / 100;
+    int deltaX = newBlockSize * 2;
+    int deltaY = newBlockSize * 1.8;
+
+    int row = (position.y() - m_pOffset.y() + deltaY) / deltaY;
+    if (row < 0 || row > m_size.height())
+    {
+        return nullptr;         // outside the map
+    }
+    int col = (position.x() - m_pOffset.x() + deltaX / 2) / deltaX;
+    if (col < 0 || col > m_size.width())
+    {
+        return nullptr;         // outside the map
+    }
+
+    // Narrow down to two columns and two rows: row-1~row, col-1~col
+    for (int i = row - 1; i <= row; i++)
+    {
+        if (i < 0 || i >= m_size.height())
+        {
+            continue;
+        }
+
+        for (int j = col - 1; j <= col; j++)
+        {
+            if (j < 0 || j >= m_size.width())
+            {
+                continue;
+            }
+
+            if (m_matrix[i][j]->getArea()->containsPoint(position, Qt::OddEvenFill))
+            {
+                return m_matrix[i][j];
+            }
+        }
+    }
+
     return nullptr;
 }
 
@@ -117,7 +152,7 @@ int Map::getDynamicsId() const
     return m_nDynamicsId;
 }
 
-QPoint Map::getCenterPosition(Block *block) const
+QPoint Map::getCenterPosition(const Block *block) const
 {
     int row = block->getRow();
     int col = block->getColumn();
@@ -139,6 +174,33 @@ int Map::getBlockSize() const
 int Map::getScale() const
 {
     return m_nScale;
+}
+
+void Map::getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) const
+{
+    if (block == nullptr)
+    {
+        return;
+    }
+
+    static int deltaCoordinates[2][6][2] =
+    {
+        {{-1, -1}, {-1, 0}, {0, -1}, {0, 1}, {1, -1}, {1, 0}},        // even rows
+        {{-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}}         // odd rows
+    };          // index delta of blocks that are adjacent to the selected block
+
+    int row = block->getRow();
+    int col = block->getColumn();
+    int parity = row % 2;
+
+    for (int i = 0; i < 6; i++)
+    {
+        Block *temp = getBlock(row + deltaCoordinates[parity][i][0], col + deltaCoordinates[parity][i][1]);
+        if (temp != nullptr)
+        {
+            blockVector.push_back(temp);
+        }
+    }
 }
 
 void Map::adjustOffset(QPoint deltaPos)

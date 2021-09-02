@@ -7,7 +7,7 @@
 GameWidget::GameWidget(QWidget *parent)
     : QWidget(parent),
       ui(new Ui::GameWidget),
-      m_dragBeginPoint(0, 0)
+      m_pDragBeginPoint(0, 0)
 {
     // Initialize cursor
     QPixmap pixmap(":/pointer");
@@ -36,7 +36,7 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize game engine
     m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_tipsLabel, this);
 
-    // Initialize timers
+    // Initialize graphics timers
     m_graphicsTimer = new QTimer(this);
     m_graphicsTimer->start(m_settings->m_nRefreshTime);
     connect(m_graphicsTimer, &QTimer::timeout, this, &GameWidget::updateAll);
@@ -46,9 +46,15 @@ GameWidget::GameWidget(QWidget *parent)
     connect(m_dynamicsTimer, &QTimer::timeout, m_map, &Map::updateDynamics);
 
     // Connect other signals to slots
-    connect(this, &GameWidget::mapMoved, m_map, &Map::adjustOffset);
-    connect(this, &GameWidget::mouseScroll, m_processer, &GameProcessor::zoomMap);
+    connect(this, &GameWidget::mouseLeftButtonClicked, m_processer, &GameProcessor::selectPosition);
+    connect(this, &GameWidget::mouseRightButtonMoved, m_processer, &GameProcessor::moveMap);
+    connect(this, &GameWidget::mouseMoved, m_processer, &GameProcessor::mouseToPosition);
+    connect(this, &GameWidget::mouseScrolled, m_processer, &GameProcessor::zoomMap);
+
     connect(m_mediaPlayer, &QMediaPlayer::stateChanged, this, &GameWidget::resetMedia);
+
+    // Track mouse movements
+    setMouseTracking(true);
 
 //    QVector<Block *> v;                 // WARNING: JUST FOR DEBUGGING MOVEMENTS
 //    for (int i = 0; i < 10; i++)
@@ -76,9 +82,13 @@ void GameWidget::paintEvent(QPaintEvent *event)
 
 void GameWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (event->button() == Qt::RightButton)
+    if (event->button() == Qt::LeftButton)
     {
-        m_dragBeginPoint = event->pos();
+        emit mouseLeftButtonClicked(event->pos());
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        m_pDragBeginPoint = event->pos();
     }
 }
 
@@ -87,14 +97,16 @@ void GameWidget::mouseMoveEvent(QMouseEvent *event)
     if (event->buttons() & Qt::RightButton)
     {
         const QPoint newPos = event->pos();
-        emit mapMoved(newPos - m_dragBeginPoint);
-        m_dragBeginPoint = newPos;
+        emit mouseRightButtonMoved(newPos - m_pDragBeginPoint);
+        m_pDragBeginPoint = newPos;
     }
+
+    emit mouseMoved(event->pos());
 }
 
 void GameWidget::wheelEvent(QWheelEvent *event)
 {
-    emit mouseScroll(event->angleDelta().y() > 0 ? 1 : -1, event->position());
+    emit mouseScrolled(event->angleDelta().y() > 0 ? 1 : -1, event->position());
 }
 
 void GameWidget::retranslate()

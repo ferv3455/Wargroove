@@ -16,7 +16,7 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
     m_nTotalMoves = m_settings->m_nMoveTime / m_settings->m_nRefreshTime;
 
     m_refreshTimer = new QTimer(this);
-    m_refreshTimer->start(m_settings->m_nRefreshTime);
+
     connect(m_refreshTimer, &QTimer::timeout, this, &UnitMover::updateSingleMovement);
     connect(this, &UnitMover::stepFinished, this, &UnitMover::updateRouteMovement);
 }
@@ -55,9 +55,10 @@ void UnitMover::moveUnit(Block *fromBlock, Block *toBlock)
     fromBlock->setUnit(nullptr);
     m_movingBlock[0] = fromBlock;
     m_movingBlock[1] = toBlock;
+    m_movingUnit->setDirection(toBlock->getCenter().x() < fromBlock->getCenter().x());
 }
 
-void UnitMover::moveUnit(QVector<Block *> blocks)
+void UnitMover::moveUnit(QVector<Block *> &blocks)
 {
     if (m_bMoving)
     {
@@ -69,7 +70,12 @@ void UnitMover::moveUnit(QVector<Block *> blocks)
         return;     // invalid
     }
 
-    if (blocks[0]->getUnit() == nullptr)
+    if (blocks.first()->getUnit() == nullptr)
+    {
+        return;     // nothing to move
+    }
+
+    if (blocks.last()->getUnit() != nullptr)
     {
         return;     // nothing to move
     }
@@ -78,6 +84,12 @@ void UnitMover::moveUnit(QVector<Block *> blocks)
     moveUnit(m_movingRoute[0], m_movingRoute[1]);
     m_movingRoute.pop_front();
     m_bMoving = true;
+    m_refreshTimer->start(m_settings->m_nRefreshTime);
+}
+
+bool UnitMover::isBusy() const
+{
+    return m_bMoving;
 }
 
 void UnitMover::updateSingleMovement()
@@ -108,8 +120,9 @@ void UnitMover::updateRouteMovement()
     if (m_movingRoute.size() < 2)
     {
         // moving finished
-        qDebug() << "Moving finished: to" << m_movingRoute[0]->getRow() << m_movingRoute[0]->getColumn();
+        qDebug() << "Moving finished: To" << m_movingRoute[0]->getRow() << m_movingRoute[0]->getColumn();
         m_bMoving = false;
+        m_refreshTimer->stop();
         emit movementFinished(m_movingRoute[0]->getUnit());
         m_movingRoute.pop_back();
     }

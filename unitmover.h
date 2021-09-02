@@ -19,8 +19,11 @@ public:
     void paint(QPainter *painter) const;
 
     // Moving operation
-    void moveUnit(Block *fromBlock, Block *toBlock);
-    void moveUnit(QVector<Block *> blocks);
+    void moveUnit(Block *fromBlock, Block *toBlock);        // shouldn't be used
+    void moveUnit(QVector<Block *> &blocks);                // use this
+
+    // Check state
+    bool isBusy() const;
 
 public slots:
     void updateSingleMovement();      // updated when screen is refreshed

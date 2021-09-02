@@ -31,6 +31,18 @@ Unit::Unit(int unitId, QObject *parent)
     m_images[3] = m_images[1].mirrored(true, false);
 }
 
+void Unit::setDirection(int direction)
+{
+    if (direction > 0)
+    {
+        m_nDirection = 1;
+    }
+    else
+    {
+        m_nDirection = 0;
+    }
+}
+
 void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
 {
     if (m_bActive)

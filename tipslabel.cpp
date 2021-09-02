@@ -1,6 +1,6 @@
 #include "tipslabel.h"
 
-#include <QDebug>
+#include <QFontDatabase>
 
 TipsLabel::TipsLabel(const QString &text, QWidget *parent)
     : QLabel(parent),
@@ -8,7 +8,7 @@ TipsLabel::TipsLabel(const QString &text, QWidget *parent)
 {
     // Formatting
     QFont font;
-    font.setFamily(QString::fromUtf8("\346\226\271\346\255\243\345\203\217\347\264\24012"));
+    font.setFamily(QFontDatabase::applicationFontFamilies(0).at(0));
     font.setPointSize(16);
     setFont(font);
 
@@ -28,6 +28,7 @@ void TipsLabel::popup(const QString &text)
     setText(text);
     m_nOpacity = 500;
     updateBackground();
+    show();
     m_timer->start(30);
 }
 
@@ -35,6 +36,7 @@ void TipsLabel::updateBackground()
 {
     if (m_nOpacity <= 0)
     {
+        hide();
         m_timer->stop();
         return;
     }

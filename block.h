@@ -24,6 +24,8 @@ public:
     Unit *getUnit() const;
     void setUnit(int unit);
     void setUnit(Unit *newUnit);
+    QPoint getCenter() const;
+    const QPolygon *getArea() const;
     int getRow() const;
     int getColumn() const;
 
@@ -32,7 +34,7 @@ private:
 
     // Graphics related
     QPolygon m_area;         // area of the block (coordinates)
-    QPoint m_center;         // center position
+    QPoint m_pCenter;        // center position
     int m_nBlockSize;        // size of the block
 
     // Properties

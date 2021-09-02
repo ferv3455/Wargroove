@@ -11,6 +11,7 @@ class Unit : public QObject
 public:
     explicit Unit(int unitId, QObject *parent = nullptr);
     void paint(QPainter *painter, const QRect &rect, int dynamicsId) const;
+    void setDirection(int direction);
 
     // Convert Image color to gray
     static QImage grayImage(const QImage *image);

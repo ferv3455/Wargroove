@@ -1,7 +1,5 @@
 #include "block.h"
 
-#include <QDebug>
-
 QVector<QPointF> Block::sm_pbasePoints =
 {
     QPointF(-1, -0.6),
@@ -15,7 +13,7 @@ QVector<QPointF> Block::sm_pbasePoints =
 Block::Block(int terrain, int unit, int row, int col, QObject *parent)
     : QObject(parent),
       m_area(),
-      m_center(),
+      m_pCenter(),
       m_nBlockSize(0),
       m_terrain(terrain),
       m_terrainImage(":/image/terrain/" + QString::number(m_terrain)),
@@ -34,7 +32,7 @@ Block::Block(int terrain, int unit, int row, int col, QObject *parent)
 
 void Block::updateArea(QPoint center, int size)
 {
-    m_center = center;
+    m_pCenter = center;
     m_nBlockSize = size;
 
     QVector<QPoint> points;
@@ -56,8 +54,8 @@ void Block::paint(QPainter *painter, int dynamicsId) const
     if (m_unit != nullptr)
     {
         m_unit->paint(painter,
-                      QRect(m_center - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
-                            m_center + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
+                      QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
+                            m_pCenter + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
                       dynamicsId);
     }
 }
@@ -80,6 +78,16 @@ void Block::setUnit(int unit)
 void Block::setUnit(Unit *newUnit)
 {
     m_unit = newUnit;
+}
+
+QPoint Block::getCenter() const
+{
+    return m_pCenter;
+}
+
+const QPolygon *Block::getArea() const
+{
+    return &m_area;
 }
 
 int Block::getRow() const

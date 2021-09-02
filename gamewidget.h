@@ -56,15 +56,17 @@ private:
     QMediaPlayer *m_SEPlayer;    // sound effect player
 
     // Mouse events related
-    QPoint m_dragBeginPoint;     // Start point of dragging
+    QPoint m_pDragBeginPoint;     // Start point of dragging
 
     // Timer
     QTimer *m_graphicsTimer;     // Timer: update screen graphics
     QTimer *m_dynamicsTimer;     // Timer: update unit dynamics
 
 signals:
-    void mapMoved(QPoint);
-    void mouseScroll(int, QPointF);
+    void mouseLeftButtonClicked(QPoint);
+    void mouseRightButtonMoved(QPoint);
+    void mouseMoved(QPoint);
+    void mouseScrolled(int, QPointF);
 };
 
 #endif // GAMEWIDGET_H
