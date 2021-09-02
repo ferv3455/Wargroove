@@ -35,6 +35,7 @@ private:
 
     // Game processers
     UnitMover *m_unitMover;      // Army unit mover
+    int m_nStage;                // Stage of a round
 
 signals:
 

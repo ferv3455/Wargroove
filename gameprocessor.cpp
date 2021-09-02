@@ -9,7 +9,8 @@ GameProcessor::GameProcessor(Settings *settings,
       m_settings(settings),
       m_gameInfo(gameInfo),
       m_map(map),
-      m_tipsLabel(tipsLabel)
+      m_tipsLabel(tipsLabel),
+      m_nStage(0)
 {
     m_unitMover = new UnitMover(m_settings, m_map, this);
 }
