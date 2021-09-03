@@ -75,7 +75,7 @@ void Map::loadFile(QString filename)
     // TODO: deleted
     for (int i = 0; i < 14; i++)
     {
-        m_matrix[1][i] = new Block(2, i, 1, 1, i, this);
+        m_matrix[1][i] = new Block(2, i, 0, 1, i, this);
     }
     m_matrix[1][14] = new Block(2, 18, 1, 1, 14, this);
     for (int i = 14; i < 18; i++)

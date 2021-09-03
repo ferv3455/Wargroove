@@ -14,6 +14,7 @@ public:
 
     // Getters and setters
     int getId() const;
+    int getSide() const;
     void setDirection(int direction);
 
     // Convert Image color to gray

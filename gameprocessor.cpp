@@ -32,7 +32,7 @@ GameProcessor::GameProcessor(Settings *settings,
     }
 
     // Connect signals and slots
-    connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]() {m_nStage = 0;});
+    connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]() {m_nStage++;});
 
     m_accessibleBlocks.push_back(m_map->getBlock(0, 0));
 }
@@ -171,15 +171,24 @@ void GameProcessor::selectPosition(QPoint position)
         case 0:                             // Select unit
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == nullptr)            // Cannot select an empty block
+            if (newBlock == nullptr)
             {
+                // Cannot select a "no" block
                 return;
             }
 
             if (newBlock->getUnit() == nullptr)
             {
+                // Cannot select an empty block
                 return;
             }
+
+            if (newBlock->getUnit()->getSide() != 0)
+            {
+                // Cannot select an enemy unit
+                return;
+            }
+
             m_selectedBlock = newBlock;
             int unitId = m_selectedBlock->getUnit()->getId();
             int unitType = m_gameInfo->getUnitInfo()[unitId][0];
@@ -193,8 +202,9 @@ void GameProcessor::selectPosition(QPoint position)
         case 1:                             // Select moving route
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == nullptr)            // Cannot select an empty block
+            if (newBlock == nullptr)
             {
+                // Cannot select an empty block
                 return;
             }
 
@@ -204,7 +214,8 @@ void GameProcessor::selectPosition(QPoint position)
             }
             if (m_movingRoute.last() != newBlock)
             {
-                return;         // cannot go there
+                // cannot go there
+                return;
             }
 
             m_selectedBlock = m_movingRoute.last();
@@ -219,6 +230,42 @@ void GameProcessor::selectPosition(QPoint position)
         case 2:                             // Wait until movement finishes
         {
             break;
+        }
+
+        case 3:                             // Select an enemy unit to attack
+        {
+            Block *newBlock = m_map->getBlock(position);
+            if (newBlock == nullptr)
+            {
+                // Cannot attack a "no" block
+                return;
+            }
+
+            if (newBlock->getUnit() == nullptr)
+            {
+                // Cannot attack an empty block
+                return;
+            }
+
+            if (newBlock->getUnit()->getSide() == 0)
+            {
+                // Cannot attack own unit
+                return;
+            }
+
+            QVector<Block *> v;
+            m_map->getAdjacentBlocks(v, m_selectedBlock);
+            if (!v.contains(newBlock))
+            {
+                // not adjacent
+                return;
+            }
+
+            // TODO: REFINED
+            m_selectedBlock = newBlock;
+            delete m_selectedBlock->getUnit();
+            m_selectedBlock->setUnit(nullptr);
+            m_nStage = 0;
         }
     }
 }
@@ -237,20 +284,23 @@ void GameProcessor::mouseToPosition(QPoint position)
         case 1:                             // Select moving route
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == m_cursorBlock)  // Cannot move to no/the same block
+            if (newBlock == m_cursorBlock)
             {
+                // Cannot move to the same block
                 return;
             }
 
             m_cursorBlock = newBlock;
             if (m_cursorBlock == nullptr)
             {
+                // Cannot move to a "no" block
                 return;
             }
 
             if (m_cursorBlock->getUnit() != nullptr &&
-                    m_cursorBlock->getUnit() != m_selectedBlock->getUnit())  // destination isn't empty
+                    m_cursorBlock->getUnit() != m_selectedBlock->getUnit())
             {
+                // destination isn't empty and isn't the starting point
                 return;
             }
 
@@ -292,6 +342,13 @@ void GameProcessor::mouseToPosition(QPoint position)
 
         case 2:                             // Wait until movement finishes
         {
+            break;
+        }
+
+        case 3:                             // Select an enemy unit to attack
+        {
+            Block *newBlock = m_map->getBlock(position);
+            m_cursorBlock = newBlock;
             break;
         }
     }

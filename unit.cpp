@@ -54,6 +54,11 @@ int Unit::getId() const
     return m_nId;
 }
 
+int Unit::getSide() const
+{
+    return m_nSide;
+}
+
 void Unit::setDirection(int direction)
 {
     if (direction > 0)
