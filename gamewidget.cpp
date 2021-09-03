@@ -2,6 +2,7 @@
 #include "ui_gamewidget.h"
 
 #include <QPainter>
+#include <QFontDatabase>
 #include <QMouseEvent>
 
 GameWidget::GameWidget(QWidget *parent)
@@ -47,7 +48,8 @@ GameWidget::GameWidget(QWidget *parent)
 
     // Connect other signals to slots
     connect(this, &GameWidget::mouseLeftButtonClicked, m_processer, &GameProcessor::selectPosition);
-    connect(this, &GameWidget::mouseRightButtonMoved, m_processer, &GameProcessor::moveMap);
+    connect(this, &GameWidget::mouseRightButtonClicked, m_processer, &GameProcessor::contextMenu);
+    connect(this, &GameWidget::mouseMiddleButtonMoved, m_processer, &GameProcessor::moveMap);
     connect(this, &GameWidget::mouseMoved, m_processer, &GameProcessor::mouseToPosition);
     connect(this, &GameWidget::mouseScrolled, m_processer, &GameProcessor::zoomMap);
 
@@ -55,13 +57,6 @@ GameWidget::GameWidget(QWidget *parent)
 
     // Track mouse movements
     setMouseTracking(true);
-
-//    QVector<Block *> v;                 // WARNING: JUST FOR DEBUGGING MOVEMENTS
-//    for (int i = 0; i < 10; i++)
-//    {
-//        v.push_back(m_map->getBlock(i + 1, i));
-//    }
-//    m_unitMover->moveUnit(v);
 }
 
 GameWidget::~GameWidget()
@@ -73,6 +68,12 @@ void GameWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
     QPainter *painter = new QPainter(this);
+
+    // Set general font
+    QFont font;
+    font.setFamily(QFontDatabase::applicationFontFamilies(0).at(0));
+    font.setPointSize(12);
+    setFont(font);
 
     m_map->paint(painter);
     m_processer->paint(painter);
@@ -88,16 +89,21 @@ void GameWidget::mousePressEvent(QMouseEvent *event)
     }
     else if (event->button() == Qt::RightButton)
     {
+        emit mouseRightButtonClicked(event->pos());
+    }
+    else if (event->button() == Qt::MiddleButton)
+    {
         m_pDragBeginPoint = event->pos();
+        emit mouseMiddleButtonClicked(event->pos());
     }
 }
 
 void GameWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (event->buttons() & Qt::RightButton)
+    if (event->buttons() & Qt::MiddleButton)
     {
         const QPoint newPos = event->pos();
-        emit mouseRightButtonMoved(newPos - m_pDragBeginPoint);
+        emit mouseMiddleButtonMoved(newPos - m_pDragBeginPoint);
         m_pDragBeginPoint = newPos;
     }
 

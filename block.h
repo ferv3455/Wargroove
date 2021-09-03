@@ -26,6 +26,7 @@ public:
     void setUnit(Unit *newUnit);
     QPoint getCenter() const;
     const QPolygon *getArea() const;
+    int getTerrain() const;
     int getRow() const;
     int getColumn() const;
 
@@ -38,7 +39,7 @@ private:
     int m_nBlockSize;        // size of the block
 
     // Properties
-    int m_terrain;           // map terrain (1~9)
+    int m_nTerrain;           // map terrain (1~9)
     QImage m_terrainImage;   // depict terrain
     Unit *m_unit;            // army unit (nullptr - nothing)
 

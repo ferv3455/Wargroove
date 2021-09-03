@@ -39,11 +39,12 @@ private:
     int m_nTotalMoves;
     int m_nCurrentMove;
     Block *m_movingBlock[2];
-    Unit *m_movingUnit;
 
     //      Route movement
     bool m_bMoving;
+    Unit *m_movingUnit;
     QVector<Block *> m_movingRoute;
+    QVector<Block *>::Iterator m_currentStep;
 
     // Update timer
     QTimer *m_refreshTimer;         // WARNING: REFRESH OVERLAPPING, or add mover->updatesingle in updateall

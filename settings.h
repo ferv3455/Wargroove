@@ -12,7 +12,7 @@ public:
 
 public:
     int m_nRefreshTime;         // milliseconds
-    int m_nMoveTime;            // milliseconds
+    int m_nMoveSteps;
 
     QString m_mapFileName;
     QSize m_mapSize;

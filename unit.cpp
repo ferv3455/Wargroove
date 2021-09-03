@@ -31,6 +31,11 @@ Unit::Unit(int unitId, QObject *parent)
     m_images[3] = m_images[1].mirrored(true, false);
 }
 
+int Unit::getId() const
+{
+    return m_nId;
+}
+
 void Unit::setDirection(int direction)
 {
     if (direction > 0)

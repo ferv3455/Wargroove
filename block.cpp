@@ -15,8 +15,8 @@ Block::Block(int terrain, int unit, int row, int col, QObject *parent)
       m_area(),
       m_pCenter(),
       m_nBlockSize(0),
-      m_terrain(terrain),
-      m_terrainImage(":/image/terrain/" + QString::number(m_terrain)),
+      m_nTerrain(terrain),
+      m_terrainImage(":/image/terrain/" + QString::number(m_nTerrain)),
       m_row(row),
       m_col(col)
 {
@@ -47,8 +47,10 @@ void Block::updateArea(QPoint center, int size)
 
 void Block::paint(QPainter *painter, int dynamicsId) const
 {
-    QBrush brush(m_terrainImage);
-    painter->setBrush(brush);
+//    QBrush brush(m_terrainImage);
+//    painter->setBrush(brush);
+    painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
+                             m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)), m_terrainImage);
     painter->drawConvexPolygon(m_area);
 
     if (m_unit != nullptr)
@@ -88,6 +90,11 @@ QPoint Block::getCenter() const
 const QPolygon *Block::getArea() const
 {
     return &m_area;
+}
+
+int Block::getTerrain() const
+{
+    return m_nTerrain;
 }
 
 int Block::getRow() const

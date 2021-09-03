@@ -64,7 +64,9 @@ private:
 
 signals:
     void mouseLeftButtonClicked(QPoint);
-    void mouseRightButtonMoved(QPoint);
+    void mouseRightButtonClicked(QPoint);
+    void mouseMiddleButtonClicked(QPoint);
+    void mouseMiddleButtonMoved(QPoint);
     void mouseMoved(QPoint);
     void mouseScrolled(int, QPointF);
 };

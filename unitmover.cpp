@@ -9,12 +9,12 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
       m_map(map),
       m_nCurrentMove(0),
       m_movingBlock{nullptr, nullptr},
-      m_movingUnit(nullptr),
       m_bMoving(false),
-      m_movingRoute()
+      m_movingUnit(nullptr),
+      m_movingRoute(),
+      m_currentStep()
 {
-    m_nTotalMoves = m_settings->m_nMoveTime / m_settings->m_nRefreshTime;
-
+    m_nTotalMoves = m_settings->m_nMoveSteps;
     m_refreshTimer = new QTimer(this);
 
     connect(m_refreshTimer, &QTimer::timeout, this, &UnitMover::updateSingleMovement);
@@ -23,15 +23,11 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
 
 void UnitMover::paint(QPainter *painter) const
 {
-    if (m_movingUnit != nullptr)
+    if (m_bMoving)
     {
-        QPoint pos[2] =
-        {
-            m_map->getCenterPosition(m_movingBlock[0]),
-            m_map->getCenterPosition(m_movingBlock[1])
-        };
-
-        QPoint center = (pos[0] * (m_nTotalMoves - m_nCurrentMove) + pos[1] * m_nCurrentMove) / m_nTotalMoves;
+        QPoint pos[2] = {m_movingBlock[0]->getCenter(), m_movingBlock[1]->getCenter()};
+        QPoint center = (pos[0] * (m_nTotalMoves - m_nCurrentMove) +
+                         pos[1] * m_nCurrentMove) / m_nTotalMoves;
         int size = m_map->getBlockSize();
         m_movingUnit->paint(painter,
                             QRect(center - QPoint(size, 1.5 * size), center + QPoint(size, 0.5 * size)),
@@ -41,18 +37,11 @@ void UnitMover::paint(QPainter *painter) const
 
 void UnitMover::moveUnit(Block *fromBlock, Block *toBlock)
 {
-    if (m_movingUnit != nullptr)
-    {
-        return;
-    }
-
-    m_movingUnit = fromBlock->getUnit();
     if (m_movingUnit == nullptr)
     {
         return;
     }
 
-    fromBlock->setUnit(nullptr);
     m_movingBlock[0] = fromBlock;
     m_movingBlock[1] = toBlock;
     m_movingUnit->setDirection(toBlock->getCenter().x() < fromBlock->getCenter().x());
@@ -67,7 +56,9 @@ void UnitMover::moveUnit(QVector<Block *> &blocks)
 
     if (blocks.size() < 2)
     {
-        return;     // invalid
+        qDebug() << "Movement finished";
+        emit movementFinished(blocks.first()->getUnit());
+        return;     // no movement required
     }
 
     if (blocks.first()->getUnit() == nullptr)
@@ -77,12 +68,14 @@ void UnitMover::moveUnit(QVector<Block *> &blocks)
 
     if (blocks.last()->getUnit() != nullptr)
     {
-        return;     // nothing to move
+        return;     // cannot move
     }
 
     m_movingRoute = blocks;
-    moveUnit(m_movingRoute[0], m_movingRoute[1]);
-    m_movingRoute.pop_front();
+    m_movingUnit = m_movingRoute.first()->getUnit();
+    m_movingRoute.first()->setUnit(nullptr);
+    m_currentStep = m_movingRoute.begin();
+    moveUnit(*m_currentStep, *(m_currentStep + 1));
     m_bMoving = true;
     m_refreshTimer->start(m_settings->m_nRefreshTime);
 }
@@ -106,10 +99,6 @@ void UnitMover::updateSingleMovement()
     else if (m_nCurrentMove == m_nTotalMoves)
     {
         // moving finished
-        m_movingBlock[1]->setUnit(m_movingUnit);
-        m_movingUnit = nullptr;
-        m_movingBlock[0] = nullptr;
-        m_movingBlock[1] = nullptr;
         m_nCurrentMove = 0;
         emit stepFinished();
     }
@@ -117,19 +106,21 @@ void UnitMover::updateSingleMovement()
 
 void UnitMover::updateRouteMovement()
 {
-    if (m_movingRoute.size() < 2)
+    m_currentStep++;
+
+    if (m_currentStep + 1 == m_movingRoute.end())
     {
         // moving finished
-        qDebug() << "Moving finished: To" << m_movingRoute[0]->getRow() << m_movingRoute[0]->getColumn();
+        qDebug() << "Movement finished";
+        m_movingRoute.last()->setUnit(m_movingUnit);
+        m_movingRoute.clear();
         m_bMoving = false;
         m_refreshTimer->stop();
-        emit movementFinished(m_movingRoute[0]->getUnit());
-        m_movingRoute.pop_back();
+        emit movementFinished(m_movingUnit);
     }
     else
     {
         // next step
-        moveUnit(m_movingRoute[0], m_movingRoute[1]);
-        m_movingRoute.pop_front();
+        moveUnit(*m_currentStep, *(m_currentStep + 1));
     }
 }

@@ -1,16 +1,4 @@
 <RCC>
-    <qresource prefix="/image/terrain">
-        <file alias="5">image/terrain/beach.png</file>
-        <file alias="7">image/terrain/deep_sea.png</file>
-        <file alias="3">image/terrain/forest.png</file>
-        <file alias="4">image/terrain/mountain.png</file>
-        <file alias="2">image/terrain/plain.png</file>
-        <file alias="9">image/terrain/reef.png</file>
-        <file alias="1">image/terrain/road.png</file>
-        <file>image/terrain/sea.png</file>
-        <file alias="6">image/terrain/shallow_sea.png</file>
-        <file alias="8">image/terrain/bridge.png</file>
-    </qresource>
     <qresource prefix="/maps">
         <file alias="river_delta">maps/river_delta.map</file>
         <file alias="default">maps/map.map</file>
@@ -45,5 +33,27 @@
         <file alias="15">image/unit/turtle.png</file>
         <file alias="17">image/unit/warship.png</file>
         <file alias="18">image/unit/commander.png</file>
+    </qresource>
+    <qresource prefix="/image/icon">
+        <file alias="commander">image/icon/Menu_Icon_Commanders.png</file>
+        <file alias="control">image/icon/Menu_Icon_Controls.png</file>
+        <file alias="damage">image/icon/Menu_Icon_Damage_Matrix.png</file>
+        <file alias="pointer">image/icon/Menu_Icon_Getting_Started.png</file>
+        <file alias="movement">image/icon/Menu_Icon_Movement.png</file>
+        <file alias="rules">image/icon/Menu_Icon_Rules.png</file>
+        <file alias="stats">image/icon/Menu_Icon_Stats.png</file>
+        <file alias="unit_type">image/icon/Menu_Icon_Unit_Types.png</file>
+        <file alias="unit">image/icon/Menu_Icon_Units.png</file>
+    </qresource>
+    <qresource prefix="/image/terrain">
+        <file alias="5">image/terrain/beach1.png</file>
+        <file alias="8">image/terrain/bridge1.png</file>
+        <file alias="7">image/terrain/deep_sea1.png</file>
+        <file alias="3">image/terrain/forest1.png</file>
+        <file alias="4">image/terrain/mountain1.png</file>
+        <file alias="2">image/terrain/plain1.png</file>
+        <file alias="9">image/terrain/reef1.png</file>
+        <file alias="1">image/terrain/road1.png</file>
+        <file alias="6">image/terrain/shallow_sea1.png</file>
     </qresource>
 </RCC>

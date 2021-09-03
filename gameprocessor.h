@@ -20,6 +20,7 @@ public:
                            QObject *parent = nullptr);
 
     void paint(QPainter *painter);
+    void updateAccessibleBlocks(Block *block, int unitType, int movement);
 
 public slots:
     void moveMap(QPoint);
@@ -28,23 +29,29 @@ public slots:
     void selectPosition(QPoint);
     void mouseToPosition(QPoint);
 
+    void contextMenu(QPoint);
+
 private:
     // Game stats
-    Settings *m_settings;           // Game settings
-    GameInfo *m_gameInfo;           // Game info
-    Map *m_map;                     // Game map
+    Settings *m_settings;               // Game settings
+    GameInfo *m_gameInfo;               // Game info
+    Map *m_map;                         // Game map
 
     // Widgets
     TipsLabel *m_tipsLabel;
 
     // Game processers
-    UnitMover *m_unitMover;         // Army unit mover
+    UnitMover *m_unitMover;             // Army unit mover
 
     // Other members
-    int m_nStage;                   // Stage of a round
-    Block *m_selectedBlock;         // Selected block
-    Block *m_cursorBlock;           // The block with the pointer
-    QVector<Block *> m_movingRoute; // Route saved
+    int m_nStage;                       // Stage of a round
+    Block *m_selectedBlock;             // Selected block
+    Block *m_cursorBlock;               // The block with the pointer
+
+    int m_nMovesLeft;                   // Move costs left
+    QVector<Block *> m_movingRoute;     // Route saved
+
+    QVector<Block *> m_accessibleBlocks;// Blocks highlighted when choosing the route
 
 };
 

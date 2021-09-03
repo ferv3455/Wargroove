@@ -2,8 +2,8 @@
 
 Settings::Settings(QObject *parent)
     : QObject(parent),
-      m_nRefreshTime(10),                          // refresh time
-      m_nMoveTime(100),                            // unit move time
+      m_nRefreshTime(5),                           // refresh time
+      m_nMoveSteps(6),                             // unit move steps
 
       m_mapFileName(":/maps/river_delta"),         // map name
       m_mapSize(50, 59),                           // width, height
