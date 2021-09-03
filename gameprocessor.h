@@ -40,6 +40,9 @@ private:
     // Widgets
     TipsLabel *m_tipsLabel;
 
+    // Pointer images
+    QImage m_pointerImage[3];
+
     // Game processers
     UnitMover *m_unitMover;             // Army unit mover
 

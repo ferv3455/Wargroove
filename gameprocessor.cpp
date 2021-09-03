@@ -25,6 +25,12 @@ GameProcessor::GameProcessor(Settings *settings,
     // Initialize unit mover
     m_unitMover = new UnitMover(m_settings, m_map, this);
 
+    // Initialize pointer images
+    for (int i = 0; i < 3; i++)
+    {
+        m_pointerImage[i] = QImage(":/hightlight_pointer/" + QString::number(i));
+    }
+
     // Connect signals and slots
     connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]() {m_nStage = 0;});
 
@@ -35,28 +41,23 @@ void GameProcessor::paint(QPainter *painter)
 {
     m_unitMover->paint(painter);
 
-    painter->setBrush(QBrush());
-    int blockSize = m_map->getBlockSize();
     if (m_cursorBlock != nullptr)
     {
         // Paint the block with the cursor on
-        painter->setPen(Qt::blue);
-        painter->drawEllipse(m_cursorBlock->getCenter(), blockSize / 2, blockSize / 2);
+        m_cursorBlock->paintPointer(painter, m_pointerImage[0]);
     }
     if (m_selectedBlock != nullptr)
     {
         // Paint the selected block
-        painter->setPen(Qt::red);
-        painter->drawEllipse(m_selectedBlock->getCenter(), blockSize / 2, blockSize / 2);
+        m_selectedBlock->paintPointer(painter, m_pointerImage[1]);
     }
 
     if (m_nStage == 1)
     {
         // Paint accessible blocks
-        painter->setPen(Qt::yellow);
         for (const auto &block : qAsConst(m_accessibleBlocks))
         {
-            painter->drawEllipse(block->getCenter(), blockSize / 2, blockSize / 2);
+            block->paintPointer(painter, m_pointerImage[2]);
         }
 
         // Paint the moving route
@@ -67,13 +68,13 @@ void GameProcessor::paint(QPainter *painter)
             path.lineTo((*iter)->getCenter());
         }
 
-        QPen pen(QColor(255, 152, 0, 150), m_map->getBlockSize());
+        QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
         pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
         painter->setPen(pen);
         painter->drawPath(path);
 
         // Paint hints
-        pen.setWidth(3);
+        pen.setWidth(5);
         painter->setPen(pen);
         painter->setBrush(QBrush(QColor(95, 95, 95, 255)));
         painter->drawRect(50, 50, 100, 150);

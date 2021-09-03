@@ -62,6 +62,12 @@ void Block::paint(QPainter *painter, int dynamicsId) const
     }
 }
 
+void Block::paintPointer(QPainter *painter, QImage &image) const
+{
+    painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.2 * m_nBlockSize),
+                             m_pCenter + QPoint(m_nBlockSize, 1.2 * m_nBlockSize)), image);
+}
+
 Unit *Block::getUnit() const
 {
     return m_unit;

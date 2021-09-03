@@ -56,4 +56,9 @@
         <file alias="1">image/terrain/road1.png</file>
         <file alias="6">image/terrain/shallow_sea1.png</file>
     </qresource>
+    <qresource prefix="/hightlight_pointer">
+        <file alias="0">image/pointer/current_pointer.png</file>
+        <file alias="2">image/pointer/accessible_pointer.png</file>
+        <file alias="1">image/pointer/selected_pointer.png</file>
+    </qresource>
 </RCC>

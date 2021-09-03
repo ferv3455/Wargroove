@@ -73,6 +73,7 @@ void GameWidget::paintEvent(QPaintEvent *event)
     QFont font;
     font.setFamily(QFontDatabase::applicationFontFamilies(0).at(0));
     font.setPointSize(12);
+    font.setWeight(QFont::Bold);
     setFont(font);
 
     m_map->paint(painter);
