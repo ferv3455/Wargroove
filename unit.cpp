@@ -16,13 +16,31 @@ QImage Unit::grayImage(const QImage *image)
     return img;
 }
 
-Unit::Unit(int unitId, QObject *parent)
+Unit::Unit(int unitId, int side, QObject *parent)
     : QObject(parent),
       m_nId(unitId),
+      m_nSide(side),
       m_nDirection(0),
       m_bActive(true)
 {
-    QImage img = QImage(":/image/unit/" + QString::number(m_nId));
+    QString imgFileName(":/image/");
+
+    if (side == 0)
+    {
+        imgFileName += "unit/";
+    }
+    else if (side == 1)
+    {
+        imgFileName += "enemy_unit/";
+    }
+
+    imgFileName += QString::number(m_nId);
+    if (unitId == 18)
+    {
+        imgFileName += "_1";                // TODO: should be updated
+    }
+
+    QImage img(imgFileName);
     int w = img.width();
     int h = img.height() / 2;
     m_images[0] = img.copy(0, 0, w, h);

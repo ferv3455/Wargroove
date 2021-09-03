@@ -230,10 +230,6 @@ void GameProcessor::mouseToPosition(QPoint position)
         case 0:
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == m_cursorBlock || newBlock == nullptr)  // Cannot move to no/the same block
-            {
-                return;
-            }
             m_cursorBlock = newBlock;
             break;
         }
@@ -241,11 +237,16 @@ void GameProcessor::mouseToPosition(QPoint position)
         case 1:                             // Select moving route
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == m_cursorBlock || newBlock == nullptr)  // Cannot move to no/the same block
+            if (newBlock == m_cursorBlock)  // Cannot move to no/the same block
             {
                 return;
             }
+
             m_cursorBlock = newBlock;
+            if (m_cursorBlock == nullptr)
+            {
+                return;
+            }
 
             if (m_cursorBlock->getUnit() != nullptr &&
                     m_cursorBlock->getUnit() != m_selectedBlock->getUnit())  // destination isn't empty

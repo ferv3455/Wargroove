@@ -67,7 +67,7 @@ void Map::loadFile(QString filename)
             }
             else
             {
-                m_matrix[i][j] = new Block(id, -1, i, j, this);
+                m_matrix[i][j] = new Block(id, -1, 0, i, j, this);
             }
         }
     }
@@ -75,15 +75,15 @@ void Map::loadFile(QString filename)
     // TODO: deleted
     for (int i = 0; i < 14; i++)
     {
-        m_matrix[1][i] = new Block(2, i, 1, i, this);
+        m_matrix[1][i] = new Block(2, i, 1, 1, i, this);
     }
-    m_matrix[1][14] = new Block(2, 18, 1, 14, this);
+    m_matrix[1][14] = new Block(2, 18, 1, 1, 14, this);
     for (int i = 14; i < 18; i++)
     {
-        m_matrix[2][i] = new Block(6, i, 2, i, this);
-        m_matrix[3][i] = new Block(7, i, 3, i, this);
-        m_matrix[4][i] = new Block(9, i, 4, i, this);
-        m_matrix[5][i] = new Block(5, i, 5, i, this);
+        m_matrix[2][i] = new Block(6, i, 1, 2, i, this);
+        m_matrix[3][i] = new Block(7, i, 1, 3, i, this);
+        m_matrix[4][i] = new Block(9, i, 1, 4, i, this);
+        m_matrix[5][i] = new Block(5, i, 1, 5, i, this);
     }
 
     qDebug() << "Map" << filename << "loaded";

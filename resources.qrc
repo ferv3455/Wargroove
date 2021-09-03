@@ -32,7 +32,9 @@
         <file alias="16">image/unit/harpoon_ship.png</file>
         <file alias="15">image/unit/turtle.png</file>
         <file alias="17">image/unit/warship.png</file>
-        <file alias="18">image/unit/commander.png</file>
+        <file alias="18_3">image/unit/commander_caesar.png</file>
+        <file alias="18_2">image/unit/commander_emeric.png</file>
+        <file alias="18_1">image/unit/commander_mercia.png</file>
     </qresource>
     <qresource prefix="/image/icon">
         <file alias="commander">image/icon/Menu_Icon_Commanders.png</file>
@@ -60,5 +62,28 @@
         <file alias="0">image/pointer/current_pointer.png</file>
         <file alias="2">image/pointer/accessible_pointer.png</file>
         <file alias="1">image/pointer/selected_pointer.png</file>
+    </qresource>
+    <qresource prefix="/image/enemy_unit">
+        <file alias="11">image/enemy_unit/aeronaut.png</file>
+        <file alias="4">image/enemy_unit/archer.png</file>
+        <file alias="8">image/enemy_unit/ballista.png</file>
+        <file alias="10">image/enemy_unit/balloon.png</file>
+        <file alias="14">image/enemy_unit/barge.png</file>
+        <file alias="6">image/enemy_unit/cavalry.png</file>
+        <file alias="18_2">image/enemy_unit/commander_ragna.png</file>
+        <file alias="18_1">image/enemy_unit/commander_sigrid.png</file>
+        <file alias="18_3">image/enemy_unit/commander_valder.png</file>
+        <file alias="1">image/enemy_unit/dog.png</file>
+        <file alias="13">image/enemy_unit/dragon.png</file>
+        <file alias="5">image/enemy_unit/giant.png</file>
+        <file alias="16">image/enemy_unit/harpoon_ship.png</file>
+        <file alias="3">image/enemy_unit/mage.png</file>
+        <file alias="12">image/enemy_unit/sky_rider.png</file>
+        <file alias="0">image/enemy_unit/soldier.png</file>
+        <file alias="2">image/enemy_unit/spearman.png</file>
+        <file alias="9">image/enemy_unit/trebuchet.png</file>
+        <file alias="15">image/enemy_unit/turtle.png</file>
+        <file alias="7">image/enemy_unit/wagon.png</file>
+        <file alias="17">image/enemy_unit/warship.png</file>
     </qresource>
 </RCC>

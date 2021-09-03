@@ -10,7 +10,7 @@ QVector<QPointF> Block::sm_pbasePoints =
     QPointF(-1, 0.6)
 };
 
-Block::Block(int terrain, int unit, int row, int col, QObject *parent)
+Block::Block(int terrain, int unit, int side, int row, int col, QObject *parent)
     : QObject(parent),
       m_area(),
       m_pCenter(),
@@ -22,7 +22,7 @@ Block::Block(int terrain, int unit, int row, int col, QObject *parent)
 {
     if (unit >= 0)
     {
-        m_unit = new Unit(unit, this->parent());
+        m_unit = new Unit(unit, side, this->parent());
     }
     else
     {
@@ -73,14 +73,14 @@ Unit *Block::getUnit() const
     return m_unit;
 }
 
-void Block::setUnit(int unit)
+void Block::setUnit(int unit, int side)
 {
     if (m_unit != nullptr)
     {
         delete m_unit;
     }
 
-    m_unit = new Unit(unit, parent());
+    m_unit = new Unit(unit, side, parent());
 }
 
 void Block::setUnit(Unit *newUnit)
