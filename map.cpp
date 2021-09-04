@@ -252,7 +252,7 @@ void Map::updateAllBlocks() const
     }
 }
 
-void Map::paint(QPainter *painter) const
+void Map::paint(QPainter *painter, int part) const
 {
     painter->setPen(QPen(QColor(0, 0, 0, 20), 3));
 
@@ -265,7 +265,7 @@ void Map::paint(QPainter *painter) const
             Block *block = getBlock(i, j);
             if (block != nullptr)
             {
-                block->paint(painter, m_nDynamicsId);
+                block->paint(painter, part, m_nDynamicsId);
             }
         }
     }

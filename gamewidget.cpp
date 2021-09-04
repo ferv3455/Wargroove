@@ -21,6 +21,7 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize graphic widgets
     m_tipsLabel = new TipsLabel(tr("Here are the tips. "), this);
     ui->verticalLayout->addWidget(m_tipsLabel);
+    m_contextMenu = new QMenu(this);
 
     // Initialize game data
     m_settings = new Settings(this);
@@ -35,7 +36,7 @@ GameWidget::GameWidget(QWidget *parent)
     m_mediaPlayer->play();
 
     // Initialize game engine
-    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_tipsLabel, this);
+    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_tipsLabel, m_contextMenu, this);
 
     // Initialize graphics timers
     m_graphicsTimer = new QTimer(this);
@@ -48,7 +49,8 @@ GameWidget::GameWidget(QWidget *parent)
 
     // Connect other signals to slots
     connect(this, &GameWidget::mouseLeftButtonClicked, m_processer, &GameProcessor::selectPosition);
-    connect(this, &GameWidget::mouseRightButtonClicked, m_processer, &GameProcessor::contextMenu);
+    connect(this, &GameWidget::mouseLeftButtonReleased, m_processer, &GameProcessor::unselectPosition);
+    connect(this, &GameWidget::mouseRightButtonClicked, m_processer, &GameProcessor::escapeMenu);
     connect(this, &GameWidget::mouseMiddleButtonMoved, m_processer, &GameProcessor::moveMap);
     connect(this, &GameWidget::mouseMoved, m_processer, &GameProcessor::mouseToPosition);
     connect(this, &GameWidget::mouseScrolled, m_processer, &GameProcessor::zoomMap);
@@ -76,8 +78,9 @@ void GameWidget::paintEvent(QPaintEvent *event)
     font.setWeight(QFont::Bold);
     setFont(font);
 
-    m_map->paint(painter);
+    m_map->paint(painter, 1);       // terrain
     m_processer->paint(painter);
+    m_map->paint(painter, 2);       // units
 
     delete painter;
 }
@@ -109,6 +112,14 @@ void GameWidget::mouseMoveEvent(QMouseEvent *event)
     }
 
     emit mouseMoved(event->pos());
+}
+
+void GameWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        emit mouseLeftButtonReleased(event->pos());
+    }
 }
 
 void GameWidget::wheelEvent(QWheelEvent *event)

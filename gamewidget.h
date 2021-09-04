@@ -29,6 +29,7 @@ public:
 
     virtual void mousePressEvent(QMouseEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
 
     void retranslate();
@@ -47,6 +48,7 @@ private:
 
     // Game widgets
     TipsLabel *m_tipsLabel;      // Label at the bottom of the screen
+    QMenu *m_contextMenu;        // Right-button context menu
 
     // Game engine
     GameProcessor *m_processer;  // Game processer
@@ -56,7 +58,7 @@ private:
     QMediaPlayer *m_SEPlayer;    // sound effect player
 
     // Mouse events related
-    QPoint m_pDragBeginPoint;     // Start point of dragging
+    QPoint m_pDragBeginPoint;    // Start point of dragging
 
     // Timer
     QTimer *m_graphicsTimer;     // Timer: update screen graphics
@@ -64,6 +66,7 @@ private:
 
 signals:
     void mouseLeftButtonClicked(QPoint);
+    void mouseLeftButtonReleased(QPoint);
     void mouseRightButtonClicked(QPoint);
     void mouseMiddleButtonClicked(QPoint);
     void mouseMiddleButtonMoved(QPoint);

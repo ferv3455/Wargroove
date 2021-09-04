@@ -15,7 +15,9 @@ public:
     // Getters and setters
     int getId() const;
     int getSide() const;
+    bool getActivity() const;
     void setDirection(int direction);
+    void setActivity(bool active);
 
     // Convert Image color to gray
     static QImage grayImage(const QImage *image);

@@ -8,6 +8,7 @@
 #include "unitmover.h"
 
 #include <QObject>
+#include <QMenu>
 
 class GameProcessor : public QObject
 {
@@ -17,19 +18,25 @@ public:
                            GameInfo *gameInfo,
                            Map *map,
                            TipsLabel *tipsLabel,
+                           QMenu *contextMenu,
                            QObject *parent = nullptr);
 
     void paint(QPainter *painter);
     void updateAccessibleBlocks(Block *block, int unitType, int movement);
+    void updateAttackableBlocks(Block *block, int rangeLow, int rangeHigh);
+    void battle();
 
 public slots:
+    void processStage(int);
+
     void moveMap(QPoint);
     void zoomMap(int, QPointF);
 
     void selectPosition(QPoint);
     void mouseToPosition(QPoint);
+    void unselectPosition(QPoint);
 
-    void contextMenu(QPoint);
+    void escapeMenu(QPoint);
 
 private:
     // Game stats
@@ -38,10 +45,14 @@ private:
     Map *m_map;                         // Game map
 
     // Widgets
-    TipsLabel *m_tipsLabel;
+    TipsLabel *m_tipsLabel;             // Tips label at the bottom of the screen
+    QMenu *m_contextMenu;               // Right-button context menu
+
+    // Menu actions
+    QAction *m_actions[3];              // Attack, Wait, Cancel
 
     // Pointer images
-    QImage m_pointerImage[3];
+    QImage m_pointerImage[5];           // Block highlights
 
     // Game processers
     UnitMover *m_unitMover;             // Army unit mover
@@ -54,8 +65,11 @@ private:
     int m_nMovesLeft;                   // Move costs left
     QVector<Block *> m_movingRoute;     // Route saved
 
-    QVector<Block *> m_accessibleBlocks;// Blocks highlighted when choosing the route
+    QVector<Block *> m_accessibleBlocks;// Accessible blocks highlighted when choosing the route
+    QVector<Block *> m_attackableBlocks;// Attackable blocks highlighted when choosing the route
 
+signals:
+    void enterStage(int);
 };
 
 #endif // GAMEPROCESSOR_H

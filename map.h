@@ -37,7 +37,8 @@ public:
     void updateAllBlocks() const;
 
     // Paint functions
-    void paint(QPainter *painter) const;
+    // @param part:      0-terrain & units, 1-terrain, 2-units
+    void paint(QPainter *painter, int part = 0) const;
 
 public slots:
     void updateDynamics();

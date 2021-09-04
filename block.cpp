@@ -45,15 +45,16 @@ void Block::updateArea(QPoint center, int size)
     m_area = QPolygon(points);
 }
 
-void Block::paint(QPainter *painter, int dynamicsId) const
+void Block::paint(QPainter *painter, int part, int dynamicsId) const
 {
-//    QBrush brush(m_terrainImage);
-//    painter->setBrush(brush);
-    painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
-                             m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)), m_terrainImage);
-    painter->drawConvexPolygon(m_area);
+    if (part != 2)
+    {
+        painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
+                                 m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)), m_terrainImage);
+        painter->drawConvexPolygon(m_area);
+    }
 
-    if (m_unit != nullptr)
+    if (part != 1 && m_unit != nullptr)
     {
         m_unit->paint(painter,
                       QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),

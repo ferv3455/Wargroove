@@ -7,12 +7,15 @@ GameProcessor::GameProcessor(Settings *settings,
                              GameInfo *gameInfo,
                              Map *map,
                              TipsLabel *tipsLabel,
+                             QMenu *contextMenu,
                              QObject *parent)
     : QObject(parent),
       m_settings(settings),
       m_gameInfo(gameInfo),
       m_map(map),
+
       m_tipsLabel(tipsLabel),
+      m_contextMenu(contextMenu),
 
       m_nStage(0),
       m_selectedBlock(nullptr),
@@ -20,26 +23,121 @@ GameProcessor::GameProcessor(Settings *settings,
 
       m_nMovesLeft(0),
       m_movingRoute(),
-      m_accessibleBlocks()
+      m_accessibleBlocks(),
+      m_attackableBlocks()
 {
-    // Initialize unit mover
-    m_unitMover = new UnitMover(m_settings, m_map, this);
+    // Initialize context menu actions
+    m_actions[0] = new QAction(tr("Attack"), this);
+    m_actions[0]->setIcon(QIcon(":/image/icon/unit"));
+    m_actions[1] = new QAction(tr("Wait"), this);
+    m_actions[2] = new QAction(tr("Cancel"), this);
 
     // Initialize pointer images
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 5; i++)
     {
         m_pointerImage[i] = QImage(":/hightlight_pointer/" + QString::number(i));
     }
 
-    // Connect signals and slots
-    connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]() {m_nStage++;});
+    // Initialize unit mover
+    m_unitMover = new UnitMover(m_settings, m_map, this);
 
-    m_accessibleBlocks.push_back(m_map->getBlock(0, 0));
+    // Connect signals and slots
+    connect(this, &GameProcessor::enterStage, this, &GameProcessor::processStage);
+
+    connect(m_actions[0], &QAction::triggered, this, [ = ]()
+    {
+        // Action: attack
+        emit enterStage(3);
+    });
+    connect(m_actions[1], &QAction::triggered, this, [ = ]()
+    {
+        // Action: wait
+        m_selectedBlock = nullptr;
+        emit enterStage(4);
+    });
+    connect(m_actions[2], &QAction::triggered, this, [ = ]()
+    {
+        // Action: cancel
+        emit enterStage(0);
+    });
+
+    connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]()
+    {
+        // Movement (stage 4) completes
+        emit enterStage(5);
+    });
 }
 
 void GameProcessor::paint(QPainter *painter)
 {
     m_unitMover->paint(painter);
+
+    switch (m_nStage)
+    {
+        case -1:        // Show selected enemy unit movement range
+        {
+            // Paint enemy unit accessible blocks
+            for (const auto &block : qAsConst(m_accessibleBlocks))
+            {
+                block->paintPointer(painter, m_pointerImage[4]);
+            }
+            break;
+        }
+
+        case 1:         // Selecting moving route: show movement range and attack zone
+        {
+            // Paint accessible blocks
+            for (const auto &block : qAsConst(m_accessibleBlocks))
+            {
+                block->paintPointer(painter, m_pointerImage[2]);
+            }
+
+            // Paint attack zone
+            for (const auto &block : qAsConst(m_attackableBlocks))
+            {
+                block->paintPointer(painter, m_pointerImage[3]);
+            }
+
+            // Paint the moving route
+            QPainterPath path;
+            path.moveTo(m_movingRoute.first()->getCenter());
+            for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
+            {
+                path.lineTo((*iter)->getCenter());
+            }
+
+            QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
+            pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
+            painter->setPen(pen);
+            painter->drawPath(path);
+
+            // Paint hints
+            // TODO: use widget to avoid overlapping
+            pen.setWidth(5);
+            painter->setPen(pen);
+            painter->setBrush(QBrush(QColor(95, 95, 95, 255)));
+            painter->drawRect(50, 50, 100, 150);
+            m_selectedBlock->getUnit()->paint(painter, QRect(50, 50, 100, 100), 0);
+            painter->drawImage(QRect(60, 160, 30, 30), QImage(":/image/icon/movement"));
+            painter->drawText(120, 180, QString::number(m_nMovesLeft));
+            break;
+        }
+
+        case 2:         // Choose whether to attack: show attack zone
+        case 3:         // Selecting a unit to attack: show attack zone
+        {
+            // Paint attack zone
+            for (const auto &block : qAsConst(m_attackableBlocks))
+            {
+                Unit *unit = block->getUnit();
+                if (unit != nullptr && unit->getSide() != 0)
+                {
+                    block->paintPointer(painter, m_pointerImage[3]);
+                }
+            }
+            break;
+        }
+    }
 
     if (m_cursorBlock != nullptr)
     {
@@ -52,36 +150,6 @@ void GameProcessor::paint(QPainter *painter)
         m_selectedBlock->paintPointer(painter, m_pointerImage[1]);
     }
 
-    if (m_nStage == 1)
-    {
-        // Paint accessible blocks
-        for (const auto &block : qAsConst(m_accessibleBlocks))
-        {
-            block->paintPointer(painter, m_pointerImage[2]);
-        }
-
-        // Paint the moving route
-        QPainterPath path;
-        path.moveTo(m_movingRoute.first()->getCenter());
-        for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
-        {
-            path.lineTo((*iter)->getCenter());
-        }
-
-        QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
-        pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
-        painter->setPen(pen);
-        painter->drawPath(path);
-
-        // Paint hints
-        pen.setWidth(5);
-        painter->setPen(pen);
-        painter->setBrush(QBrush(QColor(95, 95, 95, 255)));
-        painter->drawRect(50, 50, 100, 150);
-        m_selectedBlock->getUnit()->paint(painter, QRect(50, 50, 100, 100), 0);
-        painter->drawImage(QRect(60, 160, 30, 30), QImage(":/image/icon/movement"));
-        painter->drawText(120, 180, QString::number(m_nMovesLeft));
-    }
 }
 
 void GameProcessor::updateAccessibleBlocks(Block *block, int unitType, int movement)
@@ -95,19 +163,19 @@ void GameProcessor::updateAccessibleBlocks(Block *block, int unitType, int movem
         int distance;
     };
 
-    QVector<Vertex> tempBlocks;
-    tempBlocks.push_back({block, 0});    // the vector only has the origin at first
+    QVector<Vertex> remainingBlocks;
+    remainingBlocks.push_back({block, 0});    // the vector only has the origin at first
 
-    while (true)
+    while (!remainingBlocks.isEmpty())
     {
         // sort by distance, get the one with the shortest distance
-        std::sort(tempBlocks.begin(), tempBlocks.end(), [](const Vertex & v1, const Vertex & v2)
+        std::sort(remainingBlocks.begin(), remainingBlocks.end(), [](const Vertex & v1, const Vertex & v2)
         {
             return v1.distance > v2.distance;
         });
 
-        const Vertex temp = tempBlocks.last();
-        tempBlocks.pop_back();
+        const Vertex temp = remainingBlocks.last();
+        remainingBlocks.pop_back();
         if (temp.distance > movement)           // other blocks are all out of reach
         {
             break;
@@ -127,7 +195,7 @@ void GameProcessor::updateAccessibleBlocks(Block *block, int unitType, int movem
             bool counted = false;
 
             // find out whether the block is counted
-            for (auto iter = tempBlocks.begin(); iter != tempBlocks.end(); iter++)
+            for (auto iter = remainingBlocks.begin(); iter != remainingBlocks.end(); iter++)
             {
                 if (iter->block == adjBlock)
                 {
@@ -144,12 +212,199 @@ void GameProcessor::updateAccessibleBlocks(Block *block, int unitType, int movem
 
             if (!counted)
             {
-                // not counted
-                tempBlocks.push_back({adjBlock, distance});
+                counted = m_accessibleBlocks.contains(adjBlock);
+                if (!counted)
+                {
+                    // not counted
+                    remainingBlocks.push_back({adjBlock, distance});
+                }
             }
         }
 
         m_accessibleBlocks.push_back(temp.block);
+    }
+}
+
+void GameProcessor::updateAttackableBlocks(Block *block, int rangeLow, int rangeHigh)
+{
+    m_attackableBlocks.clear();
+
+    struct Vertex
+    {
+        Block *block;
+        int distance;
+    };
+
+    QVector<Vertex> remainingBlocks;
+    QVector<Vertex> countedBlocks;
+    remainingBlocks.push_back({block, 0});    // the vector only has the origin at first
+
+    while (!remainingBlocks.isEmpty())
+    {
+        // sort by distance, get the one with the shortest distance
+        std::sort(remainingBlocks.begin(), remainingBlocks.end(), [](const Vertex & v1, const Vertex & v2)
+        {
+            return v1.distance > v2.distance;
+        });
+
+        const Vertex temp = remainingBlocks.last();
+        remainingBlocks.pop_back();
+        if (temp.distance > rangeHigh)           // other blocks are all out of reach
+        {
+            break;
+        }
+
+        QVector<Block *> adjacentBlocks;
+        m_map->getAdjacentBlocks(adjacentBlocks, temp.block);
+
+        for (const auto &adjBlock : qAsConst(adjacentBlocks))
+        {
+            int distance = temp.distance + 1;
+            bool counted = false;
+
+            // find out whether the block is counted
+            for (auto iter = remainingBlocks.begin(); iter != remainingBlocks.end(); iter++)
+            {
+                if (iter->block == adjBlock)
+                {
+                    // yes
+                    counted = true;
+                    break;
+                }
+            }
+
+            if (!counted)
+            {
+                for (auto iter = countedBlocks.begin(); iter != countedBlocks.end(); iter++)
+                {
+                    if (iter->block == adjBlock)
+                    {
+                        // yes
+                        counted = true;
+                        break;
+                    }
+                }
+
+                if (!counted)
+                {
+                    // not counted
+                    remainingBlocks.push_back({adjBlock, distance});
+                }
+            }
+        }
+
+        countedBlocks.push_back(temp);
+    }
+
+    // remove blocks nearer than rangeLow or without enemy units
+    for (const auto &vertex : qAsConst(countedBlocks))
+    {
+        if (vertex.distance >= rangeLow)
+        {
+            Block *block = vertex.block;
+            Unit *unit = block->getUnit();
+            if (unit != nullptr && unit->getSide() != 0)
+            {
+                m_attackableBlocks.push_back(block);
+            }
+        }
+    }
+}
+
+void GameProcessor::battle()
+{
+    Unit *playerUnit = m_movingRoute.last()->getUnit();
+    if (m_selectedBlock != nullptr)
+    {
+        // Choose to attack
+        Unit *enemyUnit = m_selectedBlock->getUnit();
+        if (enemyUnit != nullptr)
+        {
+            // SHOULD GO IN HERE
+            // TODO: BATTLE HERE
+            delete enemyUnit;
+            m_selectedBlock->setUnit(nullptr);
+        }
+
+        // Battle ends (if there is a battle)
+        m_selectedBlock = nullptr;
+    }
+
+    // Invalidate the unit
+    playerUnit->setActivity(false);
+    emit enterStage(0);
+}
+
+void GameProcessor::processStage(int stage)
+{
+    m_nStage = stage;
+    switch (m_nStage)
+    {
+        case -1:
+        {
+            break;
+        }
+
+        case 0:
+        {
+            m_selectedBlock = nullptr;
+            m_movingRoute.clear();
+            break;
+        }
+
+        case 1:
+        {
+            // Update accessible blocks
+            int unitId = m_selectedBlock->getUnit()->getId();
+            int unitType = m_gameInfo->getUnitInfo()[unitId][0];
+            m_nMovesLeft = m_gameInfo->getUnitInfo()[unitId][1];
+            updateAccessibleBlocks(m_selectedBlock, unitType, m_nMovesLeft);
+
+            if (m_selectedBlock->getUnit()->getSide() != 0)
+            {
+                // Select an enemy unit
+                emit enterStage(-1);
+                break;
+            }
+
+            m_movingRoute.push_back(m_selectedBlock);
+            updateAttackableBlocks(m_selectedBlock, m_gameInfo->getUnitInfo()[unitId][2],
+                                   m_gameInfo->getUnitInfo()[unitId][3]);
+            break;
+        }
+
+        case 2:
+        {
+            // Show context menu
+            m_contextMenu->clear();
+            if (!m_attackableBlocks.isEmpty())
+            {
+                m_contextMenu->addAction(m_actions[0]);
+            }
+            m_contextMenu->addAction(m_actions[1]);
+            m_contextMenu->addAction(m_actions[2]);
+            m_contextMenu->exec(QCursor::pos());
+            break;
+        }
+
+        case 3:
+        {
+            break;
+        }
+
+        case 4:
+        {
+            // Begin moving
+            m_unitMover->moveUnit(m_movingRoute);
+            break;
+        }
+
+        case 5:
+        {
+            // Battle field
+            battle();               // TODO: REFINED
+            break;
+        }
     }
 }
 
@@ -174,28 +429,23 @@ void GameProcessor::selectPosition(QPoint position)
             if (newBlock == nullptr)
             {
                 // Cannot select a "no" block
-                return;
+                break;
             }
 
             if (newBlock->getUnit() == nullptr)
             {
                 // Cannot select an empty block
-                return;
+                break;
             }
 
-            if (newBlock->getUnit()->getSide() != 0)
+            if (!newBlock->getUnit()->getActivity())
             {
-                // Cannot select an enemy unit
-                return;
+                // Cannot operate an inactive unit
+                break;
             }
 
             m_selectedBlock = newBlock;
-            int unitId = m_selectedBlock->getUnit()->getId();
-            int unitType = m_gameInfo->getUnitInfo()[unitId][0];
-            m_nMovesLeft = m_gameInfo->getUnitInfo()[unitId][1];
-            updateAccessibleBlocks(m_selectedBlock, unitType, m_nMovesLeft);
-            m_movingRoute.push_back(m_selectedBlock);
-            m_nStage++;
+            emit enterStage(1);
             break;
         }
 
@@ -205,29 +455,25 @@ void GameProcessor::selectPosition(QPoint position)
             if (newBlock == nullptr)
             {
                 // Cannot select an empty block
-                return;
+                break;
             }
 
             if (m_unitMover->isBusy())
             {
-                return;
+                break;
             }
             if (m_movingRoute.last() != newBlock)
             {
                 // cannot go there
-                return;
+                break;
             }
 
             m_selectedBlock = m_movingRoute.last();
-
-            // Begin moving
-            m_nStage++;
-            m_unitMover->moveUnit(m_movingRoute);
-            m_movingRoute.clear();
+            emit enterStage(2);
             break;
         }
 
-        case 2:                             // Wait until movement finishes
+        case 2:                             // Choose whether to attack, wait now
         {
             break;
         }
@@ -235,37 +481,21 @@ void GameProcessor::selectPosition(QPoint position)
         case 3:                             // Select an enemy unit to attack
         {
             Block *newBlock = m_map->getBlock(position);
-            if (newBlock == nullptr)
+            if (!m_attackableBlocks.contains(newBlock))
             {
-                // Cannot attack a "no" block
-                return;
+                // Cannot attack the block
+                break;
             }
 
-            if (newBlock->getUnit() == nullptr)
-            {
-                // Cannot attack an empty block
-                return;
-            }
-
-            if (newBlock->getUnit()->getSide() == 0)
-            {
-                // Cannot attack own unit
-                return;
-            }
-
-            QVector<Block *> v;
-            m_map->getAdjacentBlocks(v, m_selectedBlock);
-            if (!v.contains(newBlock))
-            {
-                // not adjacent
-                return;
-            }
-
-            // TODO: REFINED
             m_selectedBlock = newBlock;
-            delete m_selectedBlock->getUnit();
-            m_selectedBlock->setUnit(nullptr);
-            m_nStage = 0;
+            emit enterStage(4);
+            break;
+        }
+
+        case 4:                             // wait until movement/attacking finishes
+        case 5:
+        {
+            break;
         }
     }
 }
@@ -287,21 +517,21 @@ void GameProcessor::mouseToPosition(QPoint position)
             if (newBlock == m_cursorBlock)
             {
                 // Cannot move to the same block
-                return;
+                break;
             }
 
             m_cursorBlock = newBlock;
             if (m_cursorBlock == nullptr)
             {
                 // Cannot move to a "no" block
-                return;
+                break;
             }
 
             if (m_cursorBlock->getUnit() != nullptr &&
                     m_cursorBlock->getUnit() != m_selectedBlock->getUnit())
             {
                 // destination isn't empty and isn't the starting point
-                return;
+                break;
             }
 
             int idx = m_movingRoute.indexOf(m_cursorBlock);
@@ -316,7 +546,11 @@ void GameProcessor::mouseToPosition(QPoint position)
                     m_nMovesLeft += moveCost;
                     m_movingRoute.pop_back();
                 }
-                return;
+
+                int unitId = m_selectedBlock->getUnit()->getId();
+                updateAttackableBlocks(m_cursorBlock, m_gameInfo->getUnitInfo()[unitId][2],
+                                       m_gameInfo->getUnitInfo()[unitId][3]);
+                break;
             }
 
             QVector<Block *> v;
@@ -324,23 +558,26 @@ void GameProcessor::mouseToPosition(QPoint position)
             if (!v.contains(m_movingRoute.last()))
             {
                 // not adjacent
-                return;
+                break;
             }
 
             int terrainId = m_cursorBlock->getTerrain();
-            int unitType = m_gameInfo->getUnitInfo()[m_selectedBlock->getUnit()->getId()][0];
+            int unitId = m_selectedBlock->getUnit()->getId();
+            int unitType = m_gameInfo->getUnitInfo()[unitId][0];
             int moveCost = m_gameInfo->getTerrainInfo()[terrainId][unitType];
             if (moveCost > m_nMovesLeft)
             {
-                return;
+                break;
             }
 
             m_nMovesLeft -= moveCost;
             m_movingRoute.push_back(m_cursorBlock);
+            updateAttackableBlocks(m_cursorBlock, m_gameInfo->getUnitInfo()[unitId][2],
+                                   m_gameInfo->getUnitInfo()[unitId][3]);
             break;
         }
 
-        case 2:                             // Wait until movement finishes
+        case 2:                             // Choose whether to attack, wait now
         {
             break;
         }
@@ -351,20 +588,52 @@ void GameProcessor::mouseToPosition(QPoint position)
             m_cursorBlock = newBlock;
             break;
         }
+
+        case 4:                             // wait until movement finishes
+        case 5:                             // wait until attacking finishes
+        {
+            break;
+        }
     }
 }
 
-void GameProcessor::contextMenu(QPoint position)
+void GameProcessor::unselectPosition(QPoint position)
 {
     Q_UNUSED(position);
+    if (m_nStage == -1)
+    {
+        emit enterStage(0);
+    }
+}
 
+void GameProcessor::escapeMenu(QPoint position)
+{
+    Q_UNUSED(position);
     switch (m_nStage)
     {
-        case 1:
+        case 0:
         {
-            m_nStage = 0;
-            m_movingRoute.clear();
-            m_selectedBlock = nullptr;
+            // Show description
+            // TODO: REFINED
+            m_contextMenu->clear();
+            m_contextMenu->addAction(m_actions[0]);
+            m_contextMenu->exec(QCursor::pos());
+            break;
+        }
+
+        case 1:
+        case 2:
+        case 3:
+        {
+            // Cancel selection
+            emit enterStage(0);
+            break;
+        }
+
+        case 4:
+        case 5:
+        {
+            // Wait
             break;
         }
     }

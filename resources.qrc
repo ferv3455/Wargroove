@@ -62,6 +62,8 @@
         <file alias="0">image/pointer/current_pointer.png</file>
         <file alias="2">image/pointer/accessible_pointer.png</file>
         <file alias="1">image/pointer/selected_pointer.png</file>
+        <file alias="3">image/pointer/attackable_pointer.png</file>
+        <file alias="4">image/pointer/enemy_pointer.png</file>
     </qresource>
     <qresource prefix="/image/enemy_unit">
         <file alias="11">image/enemy_unit/aeronaut.png</file>

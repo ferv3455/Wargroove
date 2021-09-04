@@ -49,6 +49,18 @@ Unit::Unit(int unitId, int side, QObject *parent)
     m_images[3] = m_images[1].mirrored(true, false);
 }
 
+void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
+{
+    if (m_bActive)
+    {
+        painter->drawImage(rect, m_images[2 * m_nDirection + dynamicsId]);
+    }
+    else
+    {
+        painter->drawImage(rect, grayImage(m_images + 2 * m_nDirection + dynamicsId));
+    }
+}
+
 int Unit::getId() const
 {
     return m_nId;
@@ -57,6 +69,11 @@ int Unit::getId() const
 int Unit::getSide() const
 {
     return m_nSide;
+}
+
+bool Unit::getActivity() const
+{
+    return m_bActive;
 }
 
 void Unit::setDirection(int direction)
@@ -71,14 +88,7 @@ void Unit::setDirection(int direction)
     }
 }
 
-void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
+void Unit::setActivity(bool active)
 {
-    if (m_bActive)
-    {
-        painter->drawImage(rect, m_images[2 * m_nDirection + dynamicsId]);
-    }
-    else
-    {
-        painter->drawImage(rect, grayImage(m_images + 2 * m_nDirection + dynamicsId));
-    }
+    m_bActive = active;
 }

@@ -18,7 +18,7 @@ public:
     // Paint block
     // @param center:    the absolute position of the center
     // @param size:      the distance between the center and a side
-    void paint(QPainter *painter, int dynamicsId = 0) const;
+    void paint(QPainter *painter, int part = 0, int dynamicsId = 0) const;
     void paintPointer(QPainter *painter, QImage &image) const;
 
     // Getter and setter
