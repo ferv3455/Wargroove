@@ -2,6 +2,8 @@
 #define MAP_H
 
 #include "block.h"
+#include "gameinfo.h"
+#include "gamestats.h"
 
 #include <QObject>
 #include <QSize>
@@ -14,10 +16,10 @@ public:
     explicit Map(QSize size,
                  QObject *parent = nullptr,
                  int blockSize = 100,
-                 QPoint offset = QPoint(200, 200),
-                 QString file = "");
+                 QPoint offset = QPoint(200, 200));
     ~Map();
-    void loadFile(QString filename);
+    void loadTerrain(const QString &filename);
+    void loadUnits(const QString &filename, GameInfo *gameInfo, GameStats *stats);
 
     // Get functions
     Block *getBlock(int row, int col) const;

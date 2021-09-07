@@ -9,18 +9,19 @@ class GameStats : public QObject
 {
     Q_OBJECT
 public:
-    friend class GameProcessor;
-    explicit GameStats(QObject *parent = nullptr, int coins = 100);
+    explicit GameStats(QObject *parent = nullptr, int totalSides = 2, int coins = 100);
 
     // Getters and setters
-    int getCoins() const;
-    const QVector<Unit *> &getPlayerUnits() const;
-    const QVector<Unit *> &getEnemyUnits() const;
+    int getCoins(int side) const;
+    void addCoins(int deltaCoins, int side);
+    const QVector<Unit *> &getUnits(int side) const;
+    void addUnit(Unit *unit);
+    void removeUnit(Unit *unit);
 
 private:
-    int m_nCoins;
-    QVector<Unit *> m_playerUnits;
-    QVector<Unit *> m_enemyUnits;
+    int m_nTotalSides;
+    int *m_nCoins;
+    QVector<Unit *> *m_units;
 
 signals:
 

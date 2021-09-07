@@ -14,7 +14,8 @@ public:
     int m_nRefreshTime;         // milliseconds
     int m_nMoveSteps;
 
-    QString m_mapFileName;
+    QString m_mapTerrainFileName;
+    QString m_mapUnitsFileName;
     QSize m_mapSize;
     int m_nBlockSize;
     int m_nZoomScale;

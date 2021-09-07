@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/maps">
+    <qresource prefix="/maps/terrain">
         <file alias="river_delta">maps/river_delta.map</file>
         <file alias="default">maps/map.map</file>
     </qresource>
@@ -70,6 +70,7 @@
         <file alias="1">image/pointer/selected_pointer.png</file>
         <file alias="3">image/pointer/attackable_pointer.png</file>
         <file alias="4">image/pointer/enemy_pointer.png</file>
+        <file alias="5">image/pointer/operable_pointer.png</file>
     </qresource>
     <qresource prefix="/image/enemy_unit">
         <file alias="11">image/enemy_unit/aeronaut.png</file>
@@ -112,5 +113,8 @@
         <file alias="19_5_-1">image/building/water_village.png</file>
         <file alias="19_5_1">image/building/water_village_blue.png</file>
         <file alias="19_5_0">image/building/water_village_own.png</file>
+    </qresource>
+    <qresource prefix="/maps/units">
+        <file alias="river_delta">maps/river_delta_units.map</file>
     </qresource>
 </RCC>

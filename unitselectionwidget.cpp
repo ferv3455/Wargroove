@@ -59,12 +59,12 @@ void UnitSelectionWidget::showUnits(int unitKind, int coins)
             if (w->m_cost <= coins)
             {
                 w->setValidity(true);
-                item->setFlags(item->flags() | Qt::ItemIsSelectable);
+                item->setFlags(item->flags() | Qt::ItemIsEnabled);
             }
             else
             {
                 w->setValidity(false);
-                item->setFlags(item->flags() & Qt::ItemIsUserCheckable);
+                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
             }
         }
         else

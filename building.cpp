@@ -8,14 +8,20 @@ Building::Building(int unitId, int side, int maxHP, QObject *parent, int innerTy
     // Reload images
     for (int i = 0; i < 3; i++)
     {
-        QImage img(QString(":/image/building/%1_%2_%3").arg(unitId).arg(innerType).arg(i - 1));
-        m_images[i] = img.copy(0, 0, img.width(), img.height() / 2);
+        m_images[i] = QImage(QString(":/image/building/%1_%2_%3").arg(unitId).arg(innerType).arg(i - 1));
     }
 
     // Uncaptured buildings
     if (m_nSide < 0)
     {
         m_nHealthPoint = 0;
+    }
+
+    // Base
+    if (m_nInnerType == 0)
+    {
+        m_nHealthPoint *= 2;
+        m_nMaxHealthPoint *= 2;
     }
 }
 

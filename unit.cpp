@@ -18,7 +18,7 @@ QImage Unit::grayImage(const QImage *image)
     return img;
 }
 
-Unit::Unit(int unitId, int side, int maxHP, QObject *parent, int innerType)
+Unit::Unit(int unitId, int side, int maxHP, QObject *parent, int innerType, float HPPercentage)
     : QObject(parent),
       m_nId(unitId),
       m_nInnerType(innerType),
@@ -28,7 +28,7 @@ Unit::Unit(int unitId, int side, int maxHP, QObject *parent, int innerType)
       m_carryingUnit(nullptr),
       m_nMaxHealthPoint(maxHP)
 {
-    m_nHealthPoint = m_nMaxHealthPoint;
+    m_nHealthPoint = m_nMaxHealthPoint * HPPercentage;
 
     if (m_nId <= 18)
     {
@@ -102,6 +102,11 @@ int Unit::getHP() const
 int Unit::getMaxHP() const
 {
     return m_nMaxHealthPoint;
+}
+
+float Unit::getHPPercentage() const
+{
+    return m_nHealthPoint * 1.0 / m_nMaxHealthPoint;
 }
 
 Unit *Unit::getCarrier() const

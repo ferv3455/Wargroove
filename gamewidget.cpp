@@ -52,9 +52,11 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize game data
     m_settings = new Settings(this);
     m_gameInfo = new GameInfo(this);
-    m_map = new Map(m_settings->m_mapSize, this,
-                    m_settings->m_nBlockSize, QPoint(100, 100), m_settings->m_mapFileName);
     m_stats = new GameStats(this);
+    m_map = new Map(m_settings->m_mapSize, this,
+                    m_settings->m_nBlockSize, QPoint(100, 100));
+    m_map->loadTerrain(m_settings->m_mapTerrainFileName);
+    m_map->loadUnits(m_settings->m_mapUnitsFileName, m_gameInfo, m_stats);
 
     // Initialize audio player
     m_mediaPlayer = new QMediaPlayer(this);

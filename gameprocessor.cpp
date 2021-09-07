@@ -12,7 +12,9 @@ GameProcessor::GameProcessor(Settings *settings,
                              UnitSelectionWidget *unitSelectionWidget,
                              QMenu *actionContextMenu,
                              QMenu *mainContextMenu,
-                             QObject *parent)
+                             QObject *parent,
+                             int movingSide,
+                             int totalSides)
     : QObject(parent),
       m_settings(settings),
       m_gameInfo(gameInfo),
@@ -24,6 +26,8 @@ GameProcessor::GameProcessor(Settings *settings,
       m_actionContextMenu(actionContextMenu),
       m_mainContextMenu(mainContextMenu),
 
+      m_nMovingSide(movingSide),
+      m_nTotalSides(totalSides),
       m_nStage(0),
       m_selectedBlock(nullptr),
       m_cursorBlock(nullptr),
@@ -54,7 +58,7 @@ GameProcessor::GameProcessor(Settings *settings,
     m_mainActions[3] = new QAction(tr("Cancel"), this);
 
     // Initialize pointer images
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
         m_pointerImage[i] = QImage(":/hightlight_pointer/" + QString::number(i));
     }
@@ -64,6 +68,7 @@ GameProcessor::GameProcessor(Settings *settings,
 
     // Connect signals and slots
     connect(this, &GameProcessor::enterStage, this, &GameProcessor::processStage);
+    connect(this, &GameProcessor::endOfTurn, this, &GameProcessor::changeSide);
     connect(m_unitMover, &UnitMover::movementFinished, this, [ = ]()
     {
         // Movement (stage 4) completes
@@ -135,123 +140,126 @@ void GameProcessor::paint(QPainter *painter)
 {
     m_unitMover->paint(painter);
 
-    switch (m_nStage)
+    if (m_nMovingSide == 0 || m_nMovingSide == 1)       // TODO: write it in settings to decide human
     {
-        case -1:        // Show selected enemy unit movement range
+        switch (m_nStage)
         {
-            // Paint enemy unit accessible blocks
-            for (const auto &block : qAsConst(m_accessibleBlocks))
+            case -1:        // Show selected enemy unit movement range
             {
-                block->paintPointer(painter, m_pointerImage[4]);
-            }
-            break;
-        }
-
-        case 1:         // Selecting moving route: show movement range and attack zone
-        {
-            // Paint accessible blocks
-            for (const auto &block : qAsConst(m_accessibleBlocks))
-            {
-                block->paintPointer(painter, m_pointerImage[2]);
+                // Paint enemy unit accessible blocks
+                for (const auto &block : qAsConst(m_accessibleBlocks))
+                {
+                    block->paintPointer(painter, m_pointerImage[4]);
+                }
+                break;
             }
 
-            // Paint attack zone
-            for (const auto &block : qAsConst(m_attackableBlocks))
+            case 1:         // Selecting moving route: show movement range and attack zone
             {
-                block->paintPointer(painter, m_pointerImage[3]);
-            }
+                // Paint accessible blocks
+                for (const auto &block : qAsConst(m_accessibleBlocks))
+                {
+                    block->paintPointer(painter, m_pointerImage[2]);
+                }
 
-            // Paint capturable blocks
-            for (const auto &block : qAsConst(m_capturableBlocks))
-            {
-                block->paintPointer(painter, m_pointerImage[3]);
-            }
-
-            // Paint carrier-related blocks
-            for (const auto &block : qAsConst(m_carrierBlocks))
-            {
-                block->paintPointer(painter, m_pointerImage[4]);
-            }
-
-            // Paint the moving route
-            QPainterPath path;
-            path.moveTo(m_movingRoute.first()->getCenter());
-            for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
-            {
-                path.lineTo((*iter)->getCenter());
-            }
-
-            QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
-            pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
-            painter->setPen(pen);
-            painter->drawPath(path);
-
-            // Paint hints
-            // TODO: use widget to avoid overlapping
-            pen.setWidth(5);
-            painter->setPen(pen);
-            painter->setBrush(QBrush(QColor(95, 95, 95, 255)));
-            painter->drawRect(50, 50, 100, 150);
-            m_selectedBlock->getUnit()->paint(painter, QRect(50, 50, 100, 100), 0);
-            painter->drawImage(QRect(60, 160, 30, 30), QImage(":/image/icon/movement"));
-            painter->drawText(120, 180, QString::number(m_nMovesLeft));
-            break;
-        }
-
-        case 2:         // Choose whether to attack: show attack zone
-        case 3:         // Selecting a unit to attack: show attack zone
-        {
-            // Paint attack zone and unit generating zone
-            for (const auto &block : qAsConst(m_attackableBlocks))
-            {
-                Unit *unit = block->getUnit();
-                if (unit != nullptr && unit->getSide() != 0)
+                // Paint attack zone
+                for (const auto &block : qAsConst(m_attackableBlocks))
                 {
                     block->paintPointer(painter, m_pointerImage[3]);
                 }
-                else if (unit == nullptr)
+
+                // Paint capturable blocks
+                for (const auto &block : qAsConst(m_capturableBlocks))
                 {
                     block->paintPointer(painter, m_pointerImage[3]);
                 }
+
+                // Paint carrier-related blocks
+                for (const auto &block : qAsConst(m_carrierBlocks))
+                {
+                    block->paintPointer(painter, m_pointerImage[5]);
+                }
+
+                // Paint the moving route
+                QPainterPath path;
+                path.moveTo(m_movingRoute.first()->getCenter());
+                for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
+                {
+                    path.lineTo((*iter)->getCenter());
+                }
+
+                QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
+                pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
+                painter->setPen(pen);
+                painter->drawPath(path);
+
+                // Paint hints
+                // TODO: use widget to avoid overlapping
+                pen.setWidth(5);
+                painter->setPen(pen);
+                painter->setBrush(QBrush(QColor(95, 95, 95, 255)));
+                painter->drawRect(50, 50, 100, 150);
+                m_selectedBlock->getUnit()->paint(painter, QRect(50, 50, 100, 100), 0);
+                painter->drawImage(QRect(60, 160, 30, 30), QImage(":/image/icon/movement"));
+                painter->drawText(120, 180, QString::number(m_nMovesLeft));
+                break;
             }
 
-            // Paint capturable blocks
-            for (const auto &block : qAsConst(m_capturableBlocks))
+            case 2:         // Choose whether to attack: show attack zone
+            case 3:         // Selecting a unit to attack: show attack zone
             {
-                block->paintPointer(painter, m_pointerImage[3]);
-            }
+                // Paint attack zone and unit generating zone
+                for (const auto &block : qAsConst(m_attackableBlocks))
+                {
+                    Unit *unit = block->getUnit();
+                    if (unit != nullptr && unit->getSide() != m_nMovingSide)
+                    {
+                        block->paintPointer(painter, m_pointerImage[3]);
+                    }
+                    else if (unit == nullptr)
+                    {
+                        block->paintPointer(painter, m_pointerImage[5]);
+                    }
+                }
 
-            // Paint carrier-related blocks
-            for (const auto &block : qAsConst(m_carrierBlocks))
-            {
-                block->paintPointer(painter, m_pointerImage[4]);
-            }
+                // Paint capturable blocks
+                for (const auto &block : qAsConst(m_capturableBlocks))
+                {
+                    block->paintPointer(painter, m_pointerImage[3]);
+                }
 
-            // Paint the moving route
-            QPainterPath path;
-            path.moveTo(m_movingRoute.first()->getCenter());
-            for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
-            {
-                path.lineTo((*iter)->getCenter());
-            }
+                // Paint carrier-related blocks
+                for (const auto &block : qAsConst(m_carrierBlocks))
+                {
+                    block->paintPointer(painter, m_pointerImage[5]);
+                }
 
-            QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
-            pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
-            painter->setPen(pen);
-            painter->drawPath(path);
-            break;
+                // Paint the moving route
+                QPainterPath path;
+                path.moveTo(m_movingRoute.first()->getCenter());
+                for (auto iter = m_movingRoute.begin() + 1; iter != m_movingRoute.end(); iter++)
+                {
+                    path.lineTo((*iter)->getCenter());
+                }
+
+                QPen pen(QColor(255, 180, 35, 180), m_map->getBlockSize());
+                pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
+                painter->setPen(pen);
+                painter->drawPath(path);
+                break;
+            }
         }
-    }
 
-    if (m_cursorBlock != nullptr)
-    {
-        // Paint the block with the cursor on
-        m_cursorBlock->paintPointer(painter, m_pointerImage[0]);
-    }
-    if (m_selectedBlock != nullptr)
-    {
-        // Paint the selected block
-        m_selectedBlock->paintPointer(painter, m_pointerImage[1]);
+        if (m_cursorBlock != nullptr)
+        {
+            // Paint the block with the cursor on
+            m_cursorBlock->paintPointer(painter, m_pointerImage[0]);
+        }
+        if (m_selectedBlock != nullptr)
+        {
+            // Paint the selected block
+            m_selectedBlock->paintPointer(painter, m_pointerImage[1]);
+        }
     }
 }
 
@@ -407,7 +415,7 @@ void GameProcessor::updateOperatableBlocks(Block *block, int rangeLow, int range
             // remove blocks nearer than rangeLow or without enemy units for attackable blocks
             Block *block = vertex.block;
             Unit *unit = block->getUnit();
-            if (unit != nullptr && unit->getSide() > 0)
+            if (unit != nullptr && unit->getSide() != m_nMovingSide && unit->getSide() >= 0)
             {
                 m_attackableBlocks.push_back(block);
             }
@@ -415,7 +423,7 @@ void GameProcessor::updateOperatableBlocks(Block *block, int rangeLow, int range
 
         if (capture && vertex.distance == 1)
         {
-            // remove blocks far away or without uncaptured buildings for capturable blocks
+            // remove blocks far away or captured buildings for capturable blocks
             Block *block = vertex.block;
             Unit *unit = block->getUnit();
             if (unit != nullptr && unit->getSide() < 0)
@@ -446,6 +454,7 @@ void GameProcessor::updateCarrierBlocks(Block *block, Unit *unit)
         for (const auto &adjBlock : qAsConst(nearbyBlocks))
         {
             if (adjBlock->getUnit() != nullptr &&
+                    adjBlock->getUnit()->getSide() == m_nMovingSide &&
                     adjBlock->getUnit()->isCarrier() &&
                     adjBlock->getUnit()->getCarrier() == nullptr)
             {
@@ -479,70 +488,78 @@ void GameProcessor::createUnit(int unitId, int side)
 
 void GameProcessor::confrontUnit()
 {
-    Unit *playerUnit = m_movingRoute.last()->getUnit();
+    Unit *activeUnit = m_movingRoute.last()->getUnit();
     if (m_selectedBlock != nullptr)
     {
-        Unit *otherUnit = m_selectedBlock->getUnit();
+        Unit *passiveUnit = m_selectedBlock->getUnit();
 
-        if (otherUnit != nullptr)
+        if (passiveUnit != nullptr)
         {
-            if (otherUnit->isCarrier() && otherUnit->getSide() == 0)
+            if (passiveUnit->isCarrier() && passiveUnit->getSide() == m_nMovingSide)
             {
                 // Get in the carrier
-                otherUnit->setCarrier(playerUnit);
+                passiveUnit->setCarrier(activeUnit);
                 m_movingRoute.last()->setUnit(nullptr);
             }
             else
             {
-                // Choose to attack/capture
-                Unit *enemyUnit = otherUnit;
-
-                // Game info
+                // Attack/Capture
                 int **terrainInfo = m_gameInfo->getTerrainInfo();
                 float **unitInfo = m_gameInfo->getUnitInfo();
                 float **damageMatrix = m_gameInfo->getDamageMatrix();
 
-                int playerId = playerUnit->getId();
-                int enemyId = enemyUnit->getId();
-                int playerAttack = unitInfo[playerId][5];
-                int enemyAttack = unitInfo[enemyId][5];
+                int activeId = activeUnit->getId();
+                int passiveId = passiveUnit->getId();
+                int activeAttack = unitInfo[activeId][5];
+                int passiveAttack = unitInfo[passiveId][5];
 
                 // Check critical hit
-                double multiplier = (playerUnit->checkCritical() ? unitInfo[playerId][5] : 1);
+                double multiplier = (activeUnit->checkCritical() ? unitInfo[activeId][5] : 1);
 
                 // Check terrain shields
-                if (enemyId < 10 || enemyId > 13)
+                if (passiveId < 10 || passiveId > 13)
                 {
                     // Enemy not an air unit
                     int shields = terrainInfo[m_selectedBlock->getTerrain()][5];
-                    multiplier *= ((10.0 - shields) / 10.0);        // WARNING: TO BE CONFIRMED
+                    multiplier *= ((10.0 - shields) / 10.0);
                 }
 
                 // Calculate damage
                 bool battleOver = false;
 
-                int playerDamage = damageMatrix[playerId][enemyId] * multiplier * playerAttack;
-                if (enemyUnit->injured(playerDamage))
+                int activeDamage = damageMatrix[activeId][passiveId] * multiplier * activeAttack;
+                if (passiveUnit->injured(activeDamage))
                 {
                     // killed
-                    if (enemyUnit->getId() <= 18)
+                    if (passiveUnit->getId() <= 18)
                     {
                         // not a building
-                        delete enemyUnit;
+                        if (passiveUnit->getCarrier() != nullptr)
+                        {
+                            // is a carrier and with a unit in it
+                            m_stats->removeUnit(passiveUnit->getCarrier());
+                            delete passiveUnit->getCarrier();
+                        }
+
+                        m_stats->removeUnit(passiveUnit);
+                        delete passiveUnit;
                         m_selectedBlock->setUnit(nullptr);
                     }
                     else
                     {
                         // building
-                        Building *building = static_cast<Building *>(enemyUnit);
+                        Building *building = static_cast<Building *>(passiveUnit);
                         if (building->getSide() >= 0)
                         {
+                            m_stats->removeUnit(building);
                             building->setSide(-1);
                         }
                         else
                         {
                             building->regenerate(0.5);
                             building->setSide(0);
+                            building->setActivity(false);
+                            m_stats->addUnit(building);
                         }
                     }
 
@@ -551,30 +568,32 @@ void GameProcessor::confrontUnit()
 
                 if (!battleOver)
                 {
-                    int enemyDamage = damageMatrix[enemyId][playerId] * enemyAttack / 2;
-                    if (playerUnit->injured(enemyDamage))
+                    int passiveDamage = damageMatrix[passiveId][activeId] * passiveAttack / 2;
+                    if (activeUnit->injured(passiveDamage))
                     {
-                        delete playerUnit;
+                        m_stats->removeUnit(activeUnit);
+                        delete activeUnit;
                         m_movingRoute.last()->setUnit(nullptr);
-                        playerUnit = nullptr;
+                        activeUnit = nullptr;
                     }
                 }
             }
         }
         else
         {
-            if (playerUnit->isCarrier())
+            if (activeUnit->isCarrier())
             {
                 // Get out of the carrier
-                m_selectedBlock->setUnit(playerUnit->getCarrier());
-                playerUnit->setCarrier(nullptr);
+                m_selectedBlock->setUnit(activeUnit->getCarrier());
+                activeUnit->setCarrier(nullptr);
             }
             else
             {
                 // A building generating a unit
                 m_tempUnit->setActivity(false);
                 m_selectedBlock->setUnit(m_tempUnit);
-                m_stats->m_nCoins -= m_gameInfo->getUnitInfo()[m_tempUnit->getId()][9];
+                m_stats->addUnit(m_tempUnit);
+                m_stats->addCoins(-m_gameInfo->getUnitInfo()[m_tempUnit->getId()][9], m_nMovingSide);
                 m_tempUnit = nullptr;
             }
         }
@@ -584,9 +603,9 @@ void GameProcessor::confrontUnit()
     }
 
     // Invalidate the unit (if it exists)
-    if (playerUnit != nullptr)
+    if (activeUnit != nullptr)
     {
-        playerUnit->setActivity(false);
+        activeUnit->setActivity(false);
     }
 
     emit enterStage(0);
@@ -615,7 +634,7 @@ void GameProcessor::processStage(int stage)
             // Update accessible blocks
             int unitId = m_selectedBlock->getUnit()->getId();
 
-            if (m_selectedBlock->getUnit()->getSide() == 0 && unitId > 18)
+            if (m_selectedBlock->getUnit()->getSide() == m_nMovingSide && unitId > 18)
             {
                 // Select an own building
                 emit enterStage(11);
@@ -626,7 +645,7 @@ void GameProcessor::processStage(int stage)
             m_nMovesLeft = m_gameInfo->getUnitInfo()[unitId][1];
             updateAccessibleBlocks(m_selectedBlock, unitType, m_nMovesLeft);
 
-            if (m_selectedBlock->getUnit()->getSide() != 0)
+            if (m_selectedBlock->getUnit()->getSide() != m_nMovingSide)
             {
                 // Select an enemy unit
                 emit enterStage(-1);
@@ -691,7 +710,7 @@ void GameProcessor::processStage(int stage)
         {
             // Show unit selection widget
             m_unitSelectionWidget->showUnits(m_selectedBlock->getUnit()->getInnerType() - 1,
-                                             m_stats->m_nCoins);
+                                             m_stats->getCoins(m_nMovingSide));
             break;
         }
 
@@ -722,34 +741,43 @@ void GameProcessor::processStage(int stage)
 
         case 16:
         {
-            // End turn: refresh all units
-            QSize mapSize = m_map->getSize();
-            int rows = mapSize.height();
-            int cols = mapSize.width();
-            for (int i = 0; i < rows; i++)
+            // End turn
+            // Refresh all units, regenerate buildings, add coins
+            for (const auto &unit : m_stats->getUnits(m_nMovingSide))
             {
-                for (int j = 0; j < cols; j++)
+                // Refresh
+                unit->setActivity(true);
+                if (unit->getCarrier() != nullptr)
                 {
-                    Block *block = m_map->getBlock(i, j);
-                    if (block != nullptr)
+                    unit->getCarrier()->setActivity(true);
+                }
+
+                // Regenerate buildings
+                if (unit->getId() > 18)
+                {
+                    unit->regenerate(0.1);
+                    if (unit->getInnerType() >= 4 || unit->getInnerType() == 0)
                     {
-                        Unit *unit = block->getUnit();
-                        if (unit != nullptr)
-                        {
-                            unit->setActivity(true);
-                            if (unit->getCarrier() != nullptr)
-                            {
-                                unit->getCarrier()->setActivity(true);
-                            }
-                        }
+                        // Village/Base: coins + 100
+                        m_stats->addCoins(100, m_nMovingSide);
                     }
                 }
             }
 
-            emit enterStage(0);
+            emit endOfTurn();
             break;
         }
     }
+}
+
+void GameProcessor::changeSide()
+{
+    m_nMovingSide++;
+    if (m_nMovingSide >= m_nTotalSides)
+    {
+        m_nMovingSide = 0;
+    }
+    emit enterStage(0);
 }
 
 void GameProcessor::moveMap(QPoint deltaPos)
@@ -821,14 +849,24 @@ void GameProcessor::selectPosition(QPoint position)
                 // Cannot select an empty block
                 break;
             }
-
             if (m_unitMover->isBusy())
             {
+                // Cannot move now
                 break;
             }
+
             if (m_movingRoute.last() != newBlock)
             {
                 // cannot go there
+                if (m_attackableBlocks.contains(newBlock) ||
+                        m_capturableBlocks.contains(newBlock) ||
+                        m_carrierBlocks.contains(newBlock))
+                {
+                    // skip stage 2 & 3, move directly
+                    m_selectedBlock = newBlock;
+                    emit enterStage(4);
+                    break;
+                }
                 break;
             }
 

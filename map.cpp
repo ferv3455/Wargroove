@@ -4,7 +4,7 @@
 #include <QTextStream>
 #include <QDebug>
 
-Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset, QString file)
+Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset)
     : QObject(parent),
       m_size(size),
       m_pOffset(offset),
@@ -16,11 +16,6 @@ Map::Map(QSize size, QObject *parent, int blockSize, QPoint offset, QString file
     for (int i = 0; i < m_size.height(); i++)
     {
         m_matrix[i] = new Block *[m_size.width()]();
-    }
-
-    if (file.size() > 0)
-    {
-        loadFile(file);
     }
 }
 
@@ -34,7 +29,7 @@ Map::~Map()
     delete m_matrix;
 }
 
-void Map::loadFile(QString filename)
+void Map::loadTerrain(const QString &filename)
 {
     QFile data(filename);
     if (!data.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -72,27 +67,40 @@ void Map::loadFile(QString filename)
         }
     }
 
-    // TODO: deleted
-    for (int i = 0; i < 14; i++)
-    {
-        m_matrix[1][i]->setUnit(i, 0, 99);
-    }
-
-    m_matrix[1][14]->setUnit(18, 1, 199, 0);
-    m_matrix[1][15]->setUnit(18, 1, 199, 1);
-    m_matrix[1][16]->setUnit(18, 1, 199, 2);
-    m_matrix[2][14]->setUnit(18, 0, 299, 0);
-    m_matrix[2][15]->setUnit(18, 0, 299, 1);
-    m_matrix[2][16]->setUnit(18, 0, 299, 2);
-
-    m_matrix[3][3]->setUnit(19, 0, 250, 2);
-    m_matrix[3][4]->setUnit(19, 0, 250, 1);
-    m_matrix[3][5]->setUnit(19, 0, 250, 3);
-
     qDebug() << "Map" << filename << "loaded";
     data.close();
 
     updateAllBlocks();
+}
+
+void Map::loadUnits(const QString &filename, GameInfo *gameInfo, GameStats *stats)
+{
+    QFile data(filename);
+    if (!data.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+    QTextStream in(&data);
+    in.readLine();          // skip comments
+
+    float **unitInfo = gameInfo->getUnitInfo();
+
+    while (!in.atEnd())
+    {
+        QStringList rowStr = in.readLine().simplified().split(" ");
+        Block *block = getBlock(rowStr[0].toInt(), rowStr[1].toInt());
+        if (block != nullptr && block->getUnit() == nullptr)
+        {
+            int unitId = rowStr[3].toInt();
+            int side = rowStr[2].toInt();
+            block->setUnit(unitId, side, unitInfo[unitId][6], rowStr[4].toInt());
+            if (side >= 0)
+            {
+                stats->addUnit(block->getUnit());
+            }
+        }
+    }
+
+    qDebug() << "Units" << filename << "loaded";
+    data.close();
 }
 
 Block *Map::getBlock(int row, int col) const

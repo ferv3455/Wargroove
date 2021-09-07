@@ -10,7 +10,8 @@ class Unit : public QObject
     Q_OBJECT
 
 public:
-    explicit Unit(int unitId, int side, int maxHP, QObject *parent = nullptr, int innerType = 0);
+    explicit Unit(int unitId, int side, int maxHP, QObject *parent = nullptr,
+                  int innerType = 0, float HPPercentage = 1.0);
     virtual void paint(QPainter *painter, const QRect &rect, int dynamicsId = 0) const;
 
     // Getters and setters
@@ -20,6 +21,7 @@ public:
     bool getActivity() const;
     int getHP() const;
     int getMaxHP() const;
+    float getHPPercentage() const;
     Unit *getCarrier() const;
 
     virtual bool isOperable() const;

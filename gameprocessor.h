@@ -24,7 +24,9 @@ public:
                            UnitSelectionWidget *unitSelectionWidget,
                            QMenu *actionContextMenu,
                            QMenu *mainContextMenu,
-                           QObject *parent = nullptr);
+                           QObject *parent = nullptr,
+                           int movingSide = 0,
+                           int totalSides = 2);
 
     void paint(QPainter *painter);
 
@@ -46,6 +48,7 @@ public:
 
 public slots:
     void processStage(int);
+    void changeSide();
 
     void moveMap(QPoint);
     void zoomMap(int, QPointF);
@@ -74,10 +77,14 @@ private:
     QAction *m_mainActions[4];          // End turn, overview, mission, cancel
 
     // Pointer images
-    QImage m_pointerImage[5];           // Block highlights
+    QImage m_pointerImage[6];           // Block highlights
 
     // Game processers
     UnitMover *m_unitMover;             // Army unit mover
+
+    // Moving side
+    int m_nMovingSide;                  // Moving side: 0-player, 1-opponent
+    int m_nTotalSides;                  // Number of sides
 
     // Other members
     int m_nStage;                       // Stage of a round
@@ -96,6 +103,7 @@ private:
 
 signals:
     void enterStage(int);
+    void endOfTurn();
 };
 
 #endif // GAMEPROCESSOR_H
