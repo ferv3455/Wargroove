@@ -4,9 +4,11 @@
 #include "map.h"
 #include "settings.h"
 #include "gameinfo.h"
+#include "gamestats.h"
 #include "unitmover.h"
 #include "gameprocessor.h"
 #include "tipslabel.h"
+#include "unitselectionwidget.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -31,6 +33,7 @@ public:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
+    virtual void resizeEvent(QResizeEvent *event);
 
     void retranslate();
 
@@ -45,10 +48,14 @@ private:
     Settings *m_settings;        // Game settings
     GameInfo *m_gameInfo;        // Game info
     Map *m_map;                  // Game map
+    GameStats *m_stats;          // Game stats
 
     // Game widgets
     TipsLabel *m_tipsLabel;      // Label at the bottom of the screen
-    QMenu *m_contextMenu;        // Right-button context menu
+    UnitSelectionWidget *m_unitSelectionWidget;   // Unit selection widget
+
+    QMenu *m_actionContextMenu;  // Action context menu
+    QMenu *m_mainContextMenu;    // Main context menu
 
     // Game engine
     GameProcessor *m_processer;  // Game processer

@@ -10,9 +10,14 @@ public:
     explicit GameInfo(QObject *parent = nullptr);
     ~GameInfo();
     void loadFile();
+
     int **getTerrainInfo() const;
     float **getUnitInfo() const;
     float **getDamageMatrix() const;
+
+    const QStringList &getUnitNames() const;
+    const QStringList &getCommanderNames() const;
+    const QStringList &getBuildingNames() const;
 
 private:
     int **m_terrainInfo;
@@ -22,6 +27,10 @@ private:
     int m_nTerrainNumber;
     int m_nUnitType;
     int m_nUnitNumber;
+
+    QStringList m_sUnitNames;
+    QStringList m_sCommanderNames;
+    QStringList m_sBuildingNames;
 };
 
 #endif // GAMEINFO_H

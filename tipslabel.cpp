@@ -7,9 +7,7 @@ TipsLabel::TipsLabel(const QString &text, QWidget *parent)
       m_nOpacity(500)
 {
     // Formatting
-    QFont font;
-    font.setFamily(QFontDatabase::applicationFontFamilies(0).at(0));
-    font.setPointSize(16);
+    QFont font(QFontDatabase::applicationFontFamilies(0).at(0), 16, QFont::Normal);
     setFont(font);
 
     setFixedHeight(80);

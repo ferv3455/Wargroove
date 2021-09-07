@@ -11,8 +11,10 @@ CONFIG += c++11
 
 SOURCES += \
     block.cpp \
+    building.cpp \
     gameinfo.cpp \
     gameprocessor.cpp \
+    gamestats.cpp \
     gamewidget.cpp \
     main.cpp \
     mainwidget.cpp \
@@ -20,23 +22,28 @@ SOURCES += \
     settings.cpp \
     tipslabel.cpp \
     unit.cpp \
-    unitmover.cpp
+    unitmover.cpp \
+    unitselectionwidget.cpp
 
 HEADERS += \
     block.h \
+    building.h \
     gameinfo.h \
     gameprocessor.h \
+    gamestats.h \
     gamewidget.h \
     mainwidget.h \
     map.h \
     settings.h \
     tipslabel.h \
     unit.h \
-    unitmover.h
+    unitmover.h \
+    unitselectionwidget.h
 
 FORMS += \
     gamewidget.ui \
-    mainwidget.ui
+    mainwidget.ui \
+    unitselectionwidget.ui
 
 TRANSLATIONS += \
     Wargroove_zh_CN.ts

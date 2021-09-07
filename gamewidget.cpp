@@ -21,13 +21,40 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize graphic widgets
     m_tipsLabel = new TipsLabel(tr("Here are the tips. "), this);
     ui->verticalLayout->addWidget(m_tipsLabel);
-    m_contextMenu = new QMenu(this);
+    m_unitSelectionWidget = new UnitSelectionWidget(this);
+
+    QString customStyleSheet = "\
+           QMenu {\
+                background-color: #d1bead;\
+                border: 3px solid #f4f6e9;\
+           }\
+           QMenu::item {\
+                font-size: 10pt; \
+                color: #3d4265;\
+                border: 3px solid #f4f6e9;\
+                background-color: #dfc686;\
+                padding: 2px 10px; \
+                margin: 2px 2px;\
+           }\
+           QMenu::item:selected {\
+                color: #f4f4e8;\
+                background-color: #a47750;\
+           }\
+           QMenu::item:pressed {\
+                color: #f4f4e8;\
+                background-color: #a47750;\
+           }";
+    m_actionContextMenu = new QMenu(this);
+    m_actionContextMenu->setStyleSheet(customStyleSheet);
+    m_mainContextMenu = new QMenu(this);
+    m_mainContextMenu->setStyleSheet(customStyleSheet);
 
     // Initialize game data
     m_settings = new Settings(this);
     m_gameInfo = new GameInfo(this);
     m_map = new Map(m_settings->m_mapSize, this,
                     m_settings->m_nBlockSize, QPoint(100, 100), m_settings->m_mapFileName);
+    m_stats = new GameStats(this);
 
     // Initialize audio player
     m_mediaPlayer = new QMediaPlayer(this);
@@ -36,7 +63,9 @@ GameWidget::GameWidget(QWidget *parent)
     m_mediaPlayer->play();
 
     // Initialize game engine
-    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_tipsLabel, m_contextMenu, this);
+    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_stats,
+                                    m_tipsLabel, m_unitSelectionWidget,
+                                    m_actionContextMenu, m_mainContextMenu, this);
 
     // Initialize graphics timers
     m_graphicsTimer = new QTimer(this);
@@ -72,11 +101,8 @@ void GameWidget::paintEvent(QPaintEvent *event)
     QPainter *painter = new QPainter(this);
 
     // Set general font
-    QFont font;
-    font.setFamily(QFontDatabase::applicationFontFamilies(0).at(0));
-    font.setPointSize(12);
-    font.setWeight(QFont::Bold);
-    setFont(font);
+    QFont font(QFontDatabase::applicationFontFamilies(0).at(0), 12, QFont::Bold);
+    painter->setFont(font);
 
     m_map->paint(painter, 1);       // terrain
     m_processer->paint(painter);
@@ -125,6 +151,12 @@ void GameWidget::mouseReleaseEvent(QMouseEvent *event)
 void GameWidget::wheelEvent(QWheelEvent *event)
 {
     emit mouseScrolled(event->angleDelta().y() > 0 ? 1 : -1, event->position());
+}
+
+void GameWidget::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+    m_unitSelectionWidget->adjustSize();
 }
 
 void GameWidget::retranslate()

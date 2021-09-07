@@ -67,7 +67,7 @@ void Map::loadFile(QString filename)
             }
             else
             {
-                m_matrix[i][j] = new Block(id, -1, 0, i, j, this);
+                m_matrix[i][j] = new Block(id, i, j, this);
             }
         }
     }
@@ -75,16 +75,19 @@ void Map::loadFile(QString filename)
     // TODO: deleted
     for (int i = 0; i < 14; i++)
     {
-        m_matrix[1][i] = new Block(2, i, 0, 1, i, this);
+        m_matrix[1][i]->setUnit(i, 0, 99);
     }
-    m_matrix[1][14] = new Block(2, 18, 1, 1, 14, this);
-    for (int i = 14; i < 18; i++)
-    {
-        m_matrix[2][i] = new Block(6, i, 1, 2, i, this);
-        m_matrix[3][i] = new Block(7, i, 1, 3, i, this);
-        m_matrix[4][i] = new Block(9, i, 1, 4, i, this);
-        m_matrix[5][i] = new Block(5, i, 1, 5, i, this);
-    }
+
+    m_matrix[1][14]->setUnit(18, 1, 199, 0);
+    m_matrix[1][15]->setUnit(18, 1, 199, 1);
+    m_matrix[1][16]->setUnit(18, 1, 199, 2);
+    m_matrix[2][14]->setUnit(18, 0, 299, 0);
+    m_matrix[2][15]->setUnit(18, 0, 299, 1);
+    m_matrix[2][16]->setUnit(18, 0, 299, 2);
+
+    m_matrix[3][3]->setUnit(19, 0, 250, 2);
+    m_matrix[3][4]->setUnit(19, 0, 250, 1);
+    m_matrix[3][5]->setUnit(19, 0, 250, 3);
 
     qDebug() << "Map" << filename << "loaded";
     data.close();
@@ -254,8 +257,6 @@ void Map::updateAllBlocks() const
 
 void Map::paint(QPainter *painter, int part) const
 {
-    painter->setPen(QPen(QColor(0, 0, 0, 20), 3));
-
     int rows = m_size.height();
     int cols = m_size.width();
     for (int i = 0; i < rows; i++)

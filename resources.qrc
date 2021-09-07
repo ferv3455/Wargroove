@@ -10,8 +10,8 @@
     </qresource>
     <qresource prefix="/">
         <file>Wargroove.png</file>
-        <file>fonts/pixel12.TTF</file>
         <file alias="pointer">image/pointer/pointer1.png</file>
+        <file>fonts/zpix.ttf</file>
     </qresource>
     <qresource prefix="/image/unit">
         <file alias="0">image/unit/soldier.png</file>
@@ -32,9 +32,9 @@
         <file alias="16">image/unit/harpoon_ship.png</file>
         <file alias="15">image/unit/turtle.png</file>
         <file alias="17">image/unit/warship.png</file>
-        <file alias="18_3">image/unit/commander_caesar.png</file>
-        <file alias="18_2">image/unit/commander_emeric.png</file>
-        <file alias="18_1">image/unit/commander_mercia.png</file>
+        <file alias="18_2">image/unit/commander_caesar.png</file>
+        <file alias="18_1">image/unit/commander_emeric.png</file>
+        <file alias="18_0">image/unit/commander_mercia.png</file>
     </qresource>
     <qresource prefix="/image/icon">
         <file alias="commander">image/icon/Menu_Icon_Commanders.png</file>
@@ -46,6 +46,12 @@
         <file alias="stats">image/icon/Menu_Icon_Stats.png</file>
         <file alias="unit_type">image/icon/Menu_Icon_Unit_Types.png</file>
         <file alias="unit">image/icon/Menu_Icon_Units.png</file>
+        <file alias="sword">image/icon/Combat_Icon.png</file>
+        <file alias="shield">image/icon/Defence_Icon.png</file>
+        <file alias="coin">image/icon/Gold_Icon.png</file>
+        <file alias="groove">image/icon/Groove_Icon.png</file>
+        <file alias="heart">image/icon/Health_Icon.png</file>
+        <file alias="sight">image/icon/Sight_Icon.png</file>
     </qresource>
     <qresource prefix="/image/terrain">
         <file alias="5">image/terrain/beach1.png</file>
@@ -72,9 +78,9 @@
         <file alias="10">image/enemy_unit/balloon.png</file>
         <file alias="14">image/enemy_unit/barge.png</file>
         <file alias="6">image/enemy_unit/cavalry.png</file>
-        <file alias="18_2">image/enemy_unit/commander_ragna.png</file>
-        <file alias="18_1">image/enemy_unit/commander_sigrid.png</file>
-        <file alias="18_3">image/enemy_unit/commander_valder.png</file>
+        <file alias="18_1">image/enemy_unit/commander_ragna.png</file>
+        <file alias="18_0">image/enemy_unit/commander_sigrid.png</file>
+        <file alias="18_2">image/enemy_unit/commander_valder.png</file>
         <file alias="1">image/enemy_unit/dog.png</file>
         <file alias="13">image/enemy_unit/dragon.png</file>
         <file alias="5">image/enemy_unit/giant.png</file>
@@ -87,5 +93,24 @@
         <file alias="15">image/enemy_unit/turtle.png</file>
         <file alias="7">image/enemy_unit/wagon.png</file>
         <file alias="17">image/enemy_unit/warship.png</file>
+    </qresource>
+    <qresource prefix="/image/building">
+        <file alias="19_1_-1">image/building/barrack.png</file>
+        <file alias="19_1_1">image/building/barrack_enemy.png</file>
+        <file alias="19_1_0">image/building/barrack_own.png</file>
+        <file alias="19_0_1">image/building/base_enemy.png</file>
+        <file alias="19_0_0">image/building/base_own.png</file>
+        <file alias="19_3_-1">image/building/port.png</file>
+        <file alias="19_3_1">image/building/port_enemy.png</file>
+        <file alias="19_3_0">image/building/port_own.png</file>
+        <file alias="19_2_-1">image/building/tower.png</file>
+        <file alias="19_2_1">image/building/tower_enemy.png</file>
+        <file alias="19_2_0">image/building/tower_own.png</file>
+        <file alias="19_4_-1">image/building/village.png</file>
+        <file alias="19_4_1">image/building/village_enemy.png</file>
+        <file alias="19_4_0">image/building/village_own.png</file>
+        <file alias="19_5_-1">image/building/water_village.png</file>
+        <file alias="19_5_1">image/building/water_village_blue.png</file>
+        <file alias="19_5_0">image/building/water_village_own.png</file>
     </qresource>
 </RCC>

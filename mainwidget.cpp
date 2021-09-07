@@ -26,7 +26,9 @@ MainWidget::MainWidget(QWidget *parent)
     m_nTranslatorId = 0;
 
     // Initialize theme font
-    int id = QFontDatabase::addApplicationFont(":/fonts/pixel12.TTF");
+    int id = QFontDatabase::addApplicationFont(":/fonts/zpix.ttf");
+    QFont font(QFontDatabase::applicationFontFamilies(id).at(0), 14, QFont::Bold);
+    QApplication::setFont(font);
     qDebug() << "Font initialize:" << id << QFontDatabase::applicationFontFamilies(id).at(0);
 
     // Initialize cursor
@@ -40,10 +42,10 @@ MainWidget::MainWidget(QWidget *parent)
 
     m_pushButton_1 = new QPushButton(this);             // TODO: NEED TO BE REFINED: game add background color
     m_pushButton_1->setText(tr("Refresh"));             // cover these
-    m_pushButton_1->setGeometry(0, 0, 100, 30);
+    m_pushButton_1->setGeometry(0, 0, 200, 30);
     m_pushButton_2 = new QPushButton(this);
     m_pushButton_2->setText(tr("Show game"));
-    m_pushButton_2->setGeometry(0, 30, 100, 30);
+    m_pushButton_2->setGeometry(0, 30, 200, 30);
 
     // Connect signals to slots
     connect(m_pushButton_1, &QPushButton::clicked, this, &MainWidget::retranslate);

@@ -1,4 +1,5 @@
 #include "block.h"
+#include "building.h"
 
 QVector<QPointF> Block::sm_pbasePoints =
 {
@@ -10,24 +11,20 @@ QVector<QPointF> Block::sm_pbasePoints =
     QPointF(-1, 0.6)
 };
 
-Block::Block(int terrain, int unit, int side, int row, int col, QObject *parent)
+Block::Block(int terrain, int row, int col, QObject *parent)
     : QObject(parent),
       m_area(),
       m_pCenter(),
       m_nBlockSize(0),
+
       m_nTerrain(terrain),
       m_terrainImage(":/image/terrain/" + QString::number(m_nTerrain)),
+      m_unit(nullptr),
+
       m_row(row),
       m_col(col)
 {
-    if (unit >= 0)
-    {
-        m_unit = new Unit(unit, side, this->parent());
-    }
-    else
-    {
-        m_unit = nullptr;
-    }
+
 }
 
 void Block::updateArea(QPoint center, int size)
@@ -49,6 +46,7 @@ void Block::paint(QPainter *painter, int part, int dynamicsId) const
 {
     if (part != 2)
     {
+        painter->setPen(QPen(QColor(0, 0, 0, 20), 3));
         painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
                                  m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)), m_terrainImage);
         painter->drawConvexPolygon(m_area);
@@ -56,6 +54,7 @@ void Block::paint(QPainter *painter, int part, int dynamicsId) const
 
     if (part != 1 && m_unit != nullptr)
     {
+        painter->setPen(Qt::white);
         m_unit->paint(painter,
                       QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
                             m_pCenter + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
@@ -69,24 +68,26 @@ void Block::paintPointer(QPainter *painter, QImage &image) const
                              m_pCenter + QPoint(m_nBlockSize, 1.2 * m_nBlockSize)), image);
 }
 
-Unit *Block::getUnit() const
+void Block::setUnit(int unit, int side, int maxHP, int innerType)
 {
-    return m_unit;
-}
-
-void Block::setUnit(int unit, int side)
-{
-    if (m_unit != nullptr)
+    if (unit <= 18)
     {
-        delete m_unit;
+        m_unit = new Unit(unit, side, maxHP, parent(), innerType);
     }
-
-    m_unit = new Unit(unit, side, parent());
+    else
+    {
+        m_unit = new Building(unit, side, maxHP, parent(), innerType);
+    }
 }
 
 void Block::setUnit(Unit *newUnit)
 {
     m_unit = newUnit;
+}
+
+Unit *Block::getUnit() const
+{
+    return m_unit;
 }
 
 QPoint Block::getCenter() const

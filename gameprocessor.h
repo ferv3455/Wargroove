@@ -5,7 +5,9 @@
 #include "settings.h"
 #include "gameinfo.h"
 #include "map.h"
+#include "gamestats.h"
 #include "unitmover.h"
+#include "unitselectionwidget.h"
 
 #include <QObject>
 #include <QMenu>
@@ -17,14 +19,30 @@ public:
     explicit GameProcessor(Settings *settings,
                            GameInfo *gameInfo,
                            Map *map,
+                           GameStats *stats,
                            TipsLabel *tipsLabel,
-                           QMenu *contextMenu,
+                           UnitSelectionWidget *unitSelectionWidget,
+                           QMenu *actionContextMenu,
+                           QMenu *mainContextMenu,
                            QObject *parent = nullptr);
 
     void paint(QPainter *painter);
+
+    // accessible blocks
     void updateAccessibleBlocks(Block *block, int unitType, int movement);
-    void updateAttackableBlocks(Block *block, int rangeLow, int rangeHigh);
-    void battle();
+
+    // attackable or capturable blocks
+    void updateOperatableBlocks(Block *block, int rangeLow, int rangeHigh,
+                                bool capture = false);
+
+    // carrier-related blocks
+    void updateCarrierBlocks(Block *block, Unit *unit);
+
+    // create a unit
+    void createUnit(int, int);
+
+    // the interaction of two units (battle/get in/get out)
+    void confrontUnit();
 
 public slots:
     void processStage(int);
@@ -35,7 +53,6 @@ public slots:
     void selectPosition(QPoint);
     void mouseToPosition(QPoint);
     void unselectPosition(QPoint);
-
     void escapeMenu(QPoint);
 
 private:
@@ -43,13 +60,18 @@ private:
     Settings *m_settings;               // Game settings
     GameInfo *m_gameInfo;               // Game info
     Map *m_map;                         // Game map
+    GameStats *m_stats;                 // Game stats
 
     // Widgets
     TipsLabel *m_tipsLabel;             // Tips label at the bottom of the screen
-    QMenu *m_contextMenu;               // Right-button context menu
+    UnitSelectionWidget *m_unitSelectionWidget;  // Unit selection widget
+
+    QMenu *m_actionContextMenu;         // Action context menu
+    QMenu *m_mainContextMenu;           // Main context menu
 
     // Menu actions
-    QAction *m_actions[3];              // Attack, Wait, Cancel
+    QAction *m_actions[6];              // Get in, Get out, Capture, Attack, Wait, Cancel
+    QAction *m_mainActions[4];          // End turn, overview, mission, cancel
 
     // Pointer images
     QImage m_pointerImage[5];           // Block highlights
@@ -67,6 +89,10 @@ private:
 
     QVector<Block *> m_accessibleBlocks;// Accessible blocks highlighted when choosing the route
     QVector<Block *> m_attackableBlocks;// Attackable blocks highlighted when choosing the route
+    QVector<Block *> m_capturableBlocks;// Capturable blocks highlighted when choosing the route
+    QVector<Block *>m_carrierBlocks;    // Blocks highlighted that are related to carriers
+
+    Unit *m_tempUnit;                   // Used when creating a unit
 
 signals:
     void enterStage(int);

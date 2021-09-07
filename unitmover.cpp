@@ -23,6 +23,7 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
 
 void UnitMover::paint(QPainter *painter) const
 {
+    painter->setPen(Qt::white);
     if (m_bMoving)
     {
         QPoint pos[2] = {m_movingBlock[0]->getCenter(), m_movingBlock[1]->getCenter()};
@@ -45,6 +46,7 @@ void UnitMover::moveUnit(Block *fromBlock, Block *toBlock)
     m_movingBlock[0] = fromBlock;
     m_movingBlock[1] = toBlock;
     m_movingUnit->setDirection(toBlock->getCenter().x() < fromBlock->getCenter().x());
+    m_nCurrentMove = 0;
 }
 
 void UnitMover::moveUnit(QVector<Block *> &blocks)
@@ -99,7 +101,6 @@ void UnitMover::updateSingleMovement()
     else if (m_nCurrentMove == m_nTotalMoves)
     {
         // moving finished
-        m_nCurrentMove = 0;
         emit stepFinished();
     }
 }

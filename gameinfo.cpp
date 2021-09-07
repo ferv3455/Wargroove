@@ -10,6 +10,47 @@ GameInfo::GameInfo(QObject *parent)
       m_nUnitType(5),
       m_nUnitNumber(21)
 {
+    // Initialize names
+    m_sUnitNames = QStringList
+    {
+        tr("Soldier"),      // 0
+        tr("Dog"),          // 1
+        tr("Spearman"),     // 2
+        tr("Mage"),         // 3
+        tr("Archer"),       // 4
+        tr("Giant"),        // 5
+        tr("Cavalry"),      // 6
+        tr("Wagon"),        // 7
+        tr("Ballista"),     // 8
+        tr("Trebuchet"),    // 9
+        tr("Balloon"),      // 10
+        tr("Aeronaut"),     // 11
+        tr("Sky Rider"),    // 12
+        tr("Dragon"),       // 13
+        tr("Barge"),        // 14
+        tr("Turtle"),       // 15
+        tr("Harpoon Ship"), // 16
+        tr("Warship")       // 17
+    };
+    m_sCommanderNames = QStringList
+    {
+        tr("Mercia"),       // 18_1
+        tr("Emeric"),       // 18_2
+        tr("Caesar"),       // 18_3
+        tr("Sigrid"),       // 18_1
+        tr("Valder"),       // 18_2
+        tr("Ragna")         // 18_3
+    };
+    m_sBuildingNames = QStringList
+    {
+        tr("Base"),         // 19_0
+        tr("Barrack"),      // 19_1
+        tr("Tower"),        // 19_2
+        tr("Port"),         // 19_3
+        tr("Village"),      // 19_4
+        tr("Water Village") // 19_5
+    };
+
     // Initialize terrain info
     m_terrainInfo = new int *[m_nTerrainNumber + 1];
     for (int i = 0; i <= m_nTerrainNumber; i++)
@@ -157,4 +198,19 @@ float **GameInfo::getUnitInfo() const
 float **GameInfo::getDamageMatrix() const
 {
     return m_damageMatrix;
+}
+
+const QStringList &GameInfo::getUnitNames() const
+{
+    return m_sUnitNames;
+}
+
+const QStringList &GameInfo::getCommanderNames() const
+{
+    return m_sCommanderNames;
+}
+
+const QStringList &GameInfo::getBuildingNames() const
+{
+    return m_sBuildingNames;
 }

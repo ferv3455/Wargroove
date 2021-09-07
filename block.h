@@ -11,7 +11,7 @@ class Block : public QObject
 {
     Q_OBJECT
 public:
-    explicit Block(int terrain, int unit, int side, int row, int col, QObject *parent = nullptr);
+    explicit Block(int terrain, int row, int col, QObject *parent = nullptr);
 
     void updateArea(QPoint center, int size);
 
@@ -22,9 +22,10 @@ public:
     void paintPointer(QPainter *painter, QImage &image) const;
 
     // Getter and setter
-    Unit *getUnit() const;
-    void setUnit(int unit, int side);
+    void setUnit(int unit, int side, int maxHP, int innerType = 0);
     void setUnit(Unit *newUnit);
+
+    Unit *getUnit() const;
     QPoint getCenter() const;
     const QPolygon *getArea() const;
     int getTerrain() const;
