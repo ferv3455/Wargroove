@@ -8,8 +8,10 @@ GameProcessor::GameProcessor(Settings *settings,
                              GameInfo *gameInfo,
                              Map *map,
                              GameStats *stats,
+                             QMediaPlayer *SEplayer,
                              TipsLabel *tipsLabel,
                              UnitSelectionWidget *unitSelectionWidget,
+                             DescriptionWidget *descriptionWidget,
                              QMenu *actionContextMenu,
                              QMenu *mainContextMenu,
                              QObject *parent,
@@ -20,9 +22,12 @@ GameProcessor::GameProcessor(Settings *settings,
       m_gameInfo(gameInfo),
       m_map(map),
       m_stats(stats),
+      m_SEplayer(SEplayer),
 
       m_tipsLabel(tipsLabel),
       m_unitSelectionWidget(unitSelectionWidget),
+      m_descriptionWidget(descriptionWidget),
+      m_battleWidget(nullptr),
       m_actionContextMenu(actionContextMenu),
       m_mainContextMenu(mainContextMenu),
 
@@ -54,7 +59,7 @@ GameProcessor::GameProcessor(Settings *settings,
 
     m_mainActions[0] = new QAction(QPixmap(":/image/icon/groove").scaledToHeight(30), tr("End turn"), this);
     m_mainActions[1] = new QAction(QPixmap(":/image/icon/rules").scaledToHeight(30), tr("Overview"), this);
-    m_mainActions[2] = new QAction(QPixmap(":/image/icon/control").scaledToHeight(30), tr("Settings"), this);
+    m_mainActions[2] = new QAction(QPixmap(":/image/icon/control").scaledToHeight(30), tr("Exit game"), this);
     m_mainActions[3] = new QAction(tr("Cancel"), this);
 
     // Initialize pointer images
@@ -78,7 +83,7 @@ GameProcessor::GameProcessor(Settings *settings,
     connect(m_unitSelectionWidget, &UnitSelectionWidget::confirm, this, [ = ](int unitId)
     {
         // Unit selection: unitId
-        createUnit(unitId, 0);
+        createUnit(unitId, m_nMovingSide);
         emit enterStage(12);
     });
     connect(m_unitSelectionWidget, &UnitSelectionWidget::cancel, this, [ = ]()
@@ -132,7 +137,12 @@ GameProcessor::GameProcessor(Settings *settings,
     connect(m_mainActions[0], &QAction::triggered, this, [ = ]()
     {
         // Action: End turn
-        emit enterStage(16);            // WARNING: number is randomized
+        emit enterStage(16);
+    });
+    connect(m_mainActions[2], &QAction::triggered, this, [ = ]()
+    {
+        // Action: Exit game
+        static_cast<QWidget *>(parent)->close();
     });
 }
 
@@ -466,9 +476,11 @@ void GameProcessor::updateCarrierBlocks(Block *block, Unit *unit)
     else
     {
         // occupied carrier: search for nearby empty blocks to drop
+        int **terrainInfo = m_gameInfo->getTerrainInfo();
+        int unitType = m_gameInfo->getUnitInfo()[unit->getId()][0];
         for (const auto &adjBlock : qAsConst(nearbyBlocks))
         {
-            if (adjBlock->getUnit() == nullptr)
+            if (adjBlock->getUnit() == nullptr && terrainInfo[adjBlock->getTerrain()][unitType] < 10)
             {
                 m_carrierBlocks.push_back(adjBlock);
             }
@@ -488,6 +500,8 @@ void GameProcessor::createUnit(int unitId, int side)
 
 void GameProcessor::confrontUnit()
 {
+    // check whether there is a battle
+    bool battle = false;
     Unit *activeUnit = m_movingRoute.last()->getUnit();
     if (m_selectedBlock != nullptr)
     {
@@ -503,6 +517,16 @@ void GameProcessor::confrontUnit()
             }
             else
             {
+                m_battleWidget = new BattleWidget(m_movingRoute.last(), m_selectedBlock,
+                                                  m_gameInfo, static_cast<QWidget *>(parent()));
+                battle = true;
+                connect(m_battleWidget, &BattleWidget::end, this, [ = ]()
+                {
+                    // Battle animation ends
+                    emit enterStage(8);
+                });
+                m_battleWidget->begin();
+
                 // Attack/Capture
                 int **terrainInfo = m_gameInfo->getTerrainInfo();
                 float **unitInfo = m_gameInfo->getUnitInfo();
@@ -525,10 +549,14 @@ void GameProcessor::confrontUnit()
                 }
 
                 // Calculate damage
-                bool battleOver = false;
+                bool killed = false;
 
-                int activeDamage = damageMatrix[activeId][passiveId] * multiplier * activeAttack;
-                if (passiveUnit->injured(activeDamage))
+                double activeRandom = (std::rand() % 10 + 95) / 100.0;
+                int activeDamage = damageMatrix[activeId][passiveId] * multiplier * activeAttack * activeRandom;
+                killed = passiveUnit->injured(activeDamage);
+                m_battleWidget->setActiveAttack(activeDamage, killed);
+
+                if (killed)
                 {
                     // killed
                     if (passiveUnit->getId() <= 18)
@@ -557,24 +585,31 @@ void GameProcessor::confrontUnit()
                         else
                         {
                             building->regenerate(0.5);
-                            building->setSide(0);
+                            building->setSide(m_nMovingSide);
                             building->setActivity(false);
                             m_stats->addUnit(building);
                         }
                     }
-
-                    battleOver = true;
                 }
 
-                if (!battleOver)
+                if (!killed)
                 {
-                    int passiveDamage = damageMatrix[passiveId][activeId] * passiveAttack / 2;
-                    if (activeUnit->injured(passiveDamage))
+                    // Find out if they are adjacent blocks
+                    QVector<Block *> v;
+                    m_map->getAdjacentBlocks(v, m_movingRoute.last());
+                    if (v.contains(m_selectedBlock))
                     {
-                        m_stats->removeUnit(activeUnit);
-                        delete activeUnit;
-                        m_movingRoute.last()->setUnit(nullptr);
-                        activeUnit = nullptr;
+                        double passiveRandom = (std::rand() % 10 + 95) / 100.0;
+                        int passiveDamage = damageMatrix[passiveId][activeId] * passiveAttack * passiveRandom / 2;
+                        killed = activeUnit->injured(passiveDamage);
+                        m_battleWidget->setPassiveAttack(passiveDamage, killed);
+                        if (killed)
+                        {
+                            m_stats->removeUnit(activeUnit);
+                            delete activeUnit;
+                            m_movingRoute.last()->setUnit(nullptr);
+                            activeUnit = nullptr;
+                        }
                     }
                 }
             }
@@ -608,7 +643,11 @@ void GameProcessor::confrontUnit()
         activeUnit->setActivity(false);
     }
 
-    emit enterStage(0);
+    if (!battle)
+    {
+        // no battles, no need to wait
+        emit enterStage(0);
+    }
 }
 
 void GameProcessor::processStage(int stage)
@@ -706,6 +745,14 @@ void GameProcessor::processStage(int stage)
             break;
         }
 
+        case 8:
+        {
+            // Battle ends
+            delete m_battleWidget;
+            emit enterStage(0);
+            break;
+        }
+
         case 11:
         {
             // Show unit selection widget
@@ -767,6 +814,8 @@ void GameProcessor::processStage(int stage)
             emit endOfTurn();
             break;
         }
+
+            // stage 20: no neccessary operations
     }
 }
 
@@ -801,6 +850,8 @@ void GameProcessor::zoomMap(int direction, QPointF point)
 
 void GameProcessor::selectPosition(QPoint position)
 {
+    m_SEplayer->play();
+
     switch (m_nStage)           // Check stage first
     {
         case 0:                             // Select unit
@@ -875,6 +926,12 @@ void GameProcessor::selectPosition(QPoint position)
             break;
         }
 
+        case 2:                             // Cancel selection
+        {
+            emit enterStage(0);
+            break;
+        }
+
         case 3:                             // Select a unit to continue
         {
             Block *newBlock = m_map->getBlock(position);
@@ -891,7 +948,13 @@ void GameProcessor::selectPosition(QPoint position)
             break;
         }
 
-            // Wait: stage 2, 4, 5, 11
+        case 20:                             // Back to game
+        {
+            m_descriptionWidget->closeWindow();
+            emit enterStage(0);
+            break;
+        }
+            // Wait: stage 2, 4, 5, 8, 11, 16
     }
 }
 
@@ -985,7 +1048,7 @@ void GameProcessor::mouseToPosition(QPoint position)
             break;
         }
 
-            // Wait: stage 2, 4, 5, 11
+            // Wait: stage 2, 4, 5, 8, 11, 16, 20
     }
 }
 
@@ -1000,12 +1063,23 @@ void GameProcessor::unselectPosition(QPoint position)
 
 void GameProcessor::escapeMenu(QPoint position)
 {
+    m_SEplayer->play();
+
     Q_UNUSED(position);
     switch (m_nStage)
     {
         case 0:
         {
-            // TODO: Show description
+            // Show description
+            Block *newBlock = m_map->getBlock(position);
+            if (newBlock == nullptr)
+            {
+                // Cannot select a "no" block
+                break;
+            }
+
+            m_descriptionWidget->setBlock(m_map->getBlock(position));
+            emit enterStage(20);
             break;
         }
 
@@ -1017,6 +1091,6 @@ void GameProcessor::escapeMenu(QPoint position)
             emit enterStage(0);
             break;
         }
-            // Wait: stage 4, 5, 11, 12
+            // Wait: stage 4, 5, 8, 11, 12, 16, 20
     }
 }

@@ -9,6 +9,7 @@
 #include "gameprocessor.h"
 #include "tipslabel.h"
 #include "unitselectionwidget.h"
+#include "descriptionwidget.h"
 
 #include <QWidget>
 #include <QTimer>
@@ -24,7 +25,7 @@ class GameWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit GameWidget(QWidget *parent = nullptr);
+    explicit GameWidget(Settings *settings, QWidget *parent = nullptr);
     ~GameWidget();
 
     virtual void paintEvent(QPaintEvent *event);
@@ -34,8 +35,7 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
-
-    void retranslate();
+    virtual void closeEvent(QCloseEvent *event);
 
 public slots:
     void updateAll();
@@ -53,6 +53,7 @@ private:
     // Game widgets
     TipsLabel *m_tipsLabel;      // Label at the bottom of the screen
     UnitSelectionWidget *m_unitSelectionWidget;   // Unit selection widget
+    DescriptionWidget *m_descriptionWidget;       // Block discription widget
 
     QMenu *m_actionContextMenu;  // Action context menu
     QMenu *m_mainContextMenu;    // Main context menu
@@ -63,6 +64,7 @@ private:
     // Sound effects
     QMediaPlayer *m_mediaPlayer; // bgm player
     QMediaPlayer *m_SEPlayer;    // sound effect player
+    bool m_bClosing;             // closing the widget
 
     // Mouse events related
     QPoint m_pDragBeginPoint;    // Start point of dragging
@@ -79,6 +81,8 @@ signals:
     void mouseMiddleButtonMoved(QPoint);
     void mouseMoved(QPoint);
     void mouseScrolled(int, QPointF);
+
+    void windowClosed();
 };
 
 #endif // GAMEWIDGET_H

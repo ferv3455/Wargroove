@@ -50,6 +50,22 @@ GameInfo::GameInfo(QObject *parent)
         tr("Village"),      // 19_4
         tr("Water Village") // 19_5
     };
+    m_sTerrainNames = QStringList
+    {
+        tr("Air"),          // 0
+        tr("Road"),         // 1
+        tr("Plain"),        // 2
+        tr("Forest"),       // 3
+        tr("Mountain"),     // 4
+        tr("Beach"),        // 5
+        tr("Shallow Sea"),  // 6
+        tr("Deep Sea"),     // 7
+        tr("Bridge"),       // 8
+        tr("Reef")          // 9
+    };
+
+    // Initialize unit descriptions
+
 
     // Initialize terrain info
     m_terrainInfo = new int *[m_nTerrainNumber + 1];
@@ -213,4 +229,9 @@ const QStringList &GameInfo::getCommanderNames() const
 const QStringList &GameInfo::getBuildingNames() const
 {
     return m_sBuildingNames;
+}
+
+const QStringList &GameInfo::getTerrainNames() const
+{
+    return m_sTerrainNames;
 }

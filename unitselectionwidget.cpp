@@ -2,13 +2,22 @@
 #include "ui_unitselectionwidget.h"
 
 #include <QPushButton>
+#include <QDebug>
 
-UnitSelectionWidget::UnitSelectionWidget(QWidget *parent) :
+UnitSelectionWidget::UnitSelectionWidget(GameInfo *gameInfo, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::UnitSelectionWidget),
-    m_listWidgetItems()
+    m_listWidgetItems(),
+    m_gameInfo(gameInfo),
+    m_nKind(0)
 {
     ui->setupUi(this);
+
+    m_descriptionWidget = new DescriptionWidget(m_gameInfo, this, true);
+    ui->horizontalLayout->addWidget(m_descriptionWidget);
+    m_descriptionWidget->setUnit(nullptr, 0);
+    m_descriptionWidget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
+
     m_listWidget = ui->listWidget;
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     setAttribute(Qt::WA_StyledBackground, true);
@@ -29,10 +38,6 @@ void UnitSelectionWidget::loadUnits(const QStringList &unitNames, float **unitIn
 {
     for (int i = 0; i < 18; i++)
     {
-//        QListWidgetItem *item =
-//            new QListWidgetItem(unitNames[i] + QString(" (%1 C)").arg(unitInfo[i][9]),
-//                                m_listWidget, unitInfo[i][10]);
-//        item->setIcon(QPixmap(":/image/unit/" + QString::number(i)).copy(0, 0, 64, 64));
         QListWidgetItem *item = new QListWidgetItem(m_listWidget, unitInfo[i][10]);
         item->setSizeHint(QSize(100, 80));
 
@@ -46,6 +51,11 @@ void UnitSelectionWidget::loadUnits(const QStringList &unitNames, float **unitIn
 
 void UnitSelectionWidget::showUnits(int unitKind, int coins)
 {
+    // Set kind
+    static int kindList[3] = {1, 0, 7};
+    m_nKind = kindList[unitKind];
+    m_descriptionWidget->setUnit(nullptr, m_nKind);
+
     // Set coins
     ui->currentCoinsLabel->setText(QString::number(coins));
 
@@ -79,14 +89,19 @@ void UnitSelectionWidget::showUnits(int unitKind, int coins)
     // Reset selection
     m_listWidget->setCurrentItem(nullptr);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+
     show();
+    m_descriptionWidget->show();
+    m_descriptionWidget->adjustBackground();
 }
 
 void UnitSelectionWidget::adjustSize()
 {
     int parentWidth = static_cast<QWidget *>(parent())->width();
     int parentHeight = static_cast<QWidget *>(parent())->height();
-    setGeometry(parentWidth / 4, parentHeight / 4, parentWidth / 2, parentHeight / 2);
+    setGeometry(parentWidth / 6, parentHeight / 6, parentWidth * 2 / 3, parentHeight * 2 / 3);
+    m_descriptionWidget->show();
+    m_descriptionWidget->adjustBackground();
 }
 
 void UnitSelectionWidget::selected()
@@ -103,7 +118,19 @@ void UnitSelectionWidget::selected()
 
 void UnitSelectionWidget::updateButtonValidity()
 {
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(m_listWidget->currentItem() != nullptr);
+    QListWidgetItem *item = m_listWidget->currentItem();
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(item != nullptr);
+    if (item == nullptr)
+    {
+        m_descriptionWidget->setUnit(nullptr, m_nKind);
+    }
+    else
+    {
+        int selectedId = m_listWidgetItems.indexOf(item);
+        Unit unit(selectedId, 0, m_gameInfo->getUnitInfo()[selectedId][6], this);
+        m_descriptionWidget->setUnit(&unit, m_nKind);
+    }
+    m_descriptionWidget->adjustBackground();
 }
 
 UnitSelectionWidget::ItemWidget::ItemWidget(const QString &name, int cost,

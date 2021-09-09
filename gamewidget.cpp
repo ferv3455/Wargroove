@@ -5,9 +5,10 @@
 #include <QFontDatabase>
 #include <QMouseEvent>
 
-GameWidget::GameWidget(QWidget *parent)
+GameWidget::GameWidget(Settings *settings, QWidget *parent)
     : QWidget(parent),
       ui(new Ui::GameWidget),
+      m_bClosing(false),
       m_pDragBeginPoint(0, 0)
 {
     // Initialize cursor
@@ -18,10 +19,28 @@ GameWidget::GameWidget(QWidget *parent)
     // Initialize ui
     ui->setupUi(this);
 
+    // Initialize background
+    setAttribute(Qt::WA_StyledBackground, true);
+    QPalette palette;
+    palette.setBrush(backgroundRole(), QBrush(QPixmap(":/image/bricks_background")));
+    setPalette(palette);
+
+    // Initialize game data
+    m_settings = settings;
+    m_gameInfo = new GameInfo(this);
+    m_stats = new GameStats(this);
+
+    int mapIndex = m_settings->m_nCurrentMap;
+    m_map = new Map(m_settings->m_mapSizes[mapIndex], this,
+                    m_settings->m_nBlockSize, QPoint(100, 100));
+    m_map->loadTerrain(":/maps/terrain/" + m_settings->m_mapNames[mapIndex]);
+    m_map->loadUnits(":/maps/units/" + m_settings->m_mapNames[mapIndex], m_gameInfo, m_stats);
+
     // Initialize graphic widgets
     m_tipsLabel = new TipsLabel(tr("Here are the tips. "), this);
     ui->verticalLayout->addWidget(m_tipsLabel);
-    m_unitSelectionWidget = new UnitSelectionWidget(this);
+    m_unitSelectionWidget = new UnitSelectionWidget(m_gameInfo, this);
+    m_descriptionWidget = new DescriptionWidget(m_gameInfo, this);
 
     QString customStyleSheet = "\
            QMenu {\
@@ -49,24 +68,19 @@ GameWidget::GameWidget(QWidget *parent)
     m_mainContextMenu = new QMenu(this);
     m_mainContextMenu->setStyleSheet(customStyleSheet);
 
-    // Initialize game data
-    m_settings = new Settings(this);
-    m_gameInfo = new GameInfo(this);
-    m_stats = new GameStats(this);
-    m_map = new Map(m_settings->m_mapSize, this,
-                    m_settings->m_nBlockSize, QPoint(100, 100));
-    m_map->loadTerrain(m_settings->m_mapTerrainFileName);
-    m_map->loadUnits(m_settings->m_mapUnitsFileName, m_gameInfo, m_stats);
-
     // Initialize audio player
     m_mediaPlayer = new QMediaPlayer(this);
     m_mediaPlayer->setMedia(QUrl(m_settings->m_backgroundMusic));
     m_mediaPlayer->setVolume(m_settings->m_nVolume);
     m_mediaPlayer->play();
 
+    m_SEPlayer = new QMediaPlayer(this);
+    m_SEPlayer->setMedia(QUrl("./music/click.mp3"));
+    m_SEPlayer->setVolume(m_settings->m_nSEVolume);
+
     // Initialize game engine
-    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_stats,
-                                    m_tipsLabel, m_unitSelectionWidget,
+    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_stats, m_SEPlayer,
+                                    m_tipsLabel, m_unitSelectionWidget, m_descriptionWidget,
                                     m_actionContextMenu, m_mainContextMenu, this);
 
     // Initialize graphics timers
@@ -159,11 +173,15 @@ void GameWidget::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
     m_unitSelectionWidget->adjustSize();
+    m_descriptionWidget->adjustBackground();
 }
 
-void GameWidget::retranslate()
+void GameWidget::closeEvent(QCloseEvent *event)
 {
-    ui->retranslateUi(this);
+    m_bClosing = true;
+    m_mediaPlayer->stop();
+    emit windowClosed();
+    QWidget::closeEvent(event);
 }
 
 void GameWidget::updateAll()
@@ -173,7 +191,7 @@ void GameWidget::updateAll()
 
 void GameWidget::resetMedia(QMediaPlayer::State newState)
 {
-    if (newState == QMediaPlayer::StoppedState)
+    if (!m_bClosing && newState == QMediaPlayer::StoppedState)
     {
         m_mediaPlayer->play();
     }

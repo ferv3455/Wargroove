@@ -21,7 +21,8 @@
   </property>
   <property name="styleSheet">
    <string notr="true">UnitSelectionWidget{
-	background-color: rgb(53, 255, 238);
+	
+	background-image: url(:/image/bricks_background.png);
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -81,6 +82,16 @@ QListWidget::item:hover {
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="resources.qrc">:/image/icon/coin</pixmap>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="2">
         <widget class="QLabel" name="currentCoinsLabel">
          <property name="sizePolicy">
@@ -97,22 +108,34 @@ QListWidget::item:hover {
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="pixmap">
-          <pixmap resource="resources.qrc">:/image/icon/coin</pixmap>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="styleSheet">
+      <string notr="true">QDialogButtonBox&gt;QPushButton{
+color: #3d4265;
+border-radius: 10px;
+border: 3px solid #f4f6e9;
+background-color: #dfc686;
+width: 100px;
+padding: 10px 2px;
+}
+QDialogButtonBox&gt;QPushButton:selected {
+    color: #f4f4e8;
+    background-color: #a47750;
+}
+QDialogButtonBox&gt;QPushButton:hover {
+    color: #3d4265;
+    background-color: #bd9877;
+}
+QDialogButtonBox&gt;QPushButton:pressed {
+    color: #3d4265;
+    background-color: rgb(157, 126, 99);
+}</string>
+     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>

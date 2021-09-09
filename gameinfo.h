@@ -18,6 +18,7 @@ public:
     const QStringList &getUnitNames() const;
     const QStringList &getCommanderNames() const;
     const QStringList &getBuildingNames() const;
+    const QStringList &getTerrainNames() const;
 
 private:
     int **m_terrainInfo;
@@ -31,6 +32,7 @@ private:
     QStringList m_sUnitNames;
     QStringList m_sCommanderNames;
     QStringList m_sBuildingNames;
+    QStringList m_sTerrainNames;
 };
 
 #endif // GAMEINFO_H

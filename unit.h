@@ -23,6 +23,7 @@ public:
     int getMaxHP() const;
     float getHPPercentage() const;
     Unit *getCarrier() const;
+    virtual void getImages(QVector<QImage> *images) const;
 
     virtual bool isOperable() const;
     bool isCarrier() const;

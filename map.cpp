@@ -86,15 +86,18 @@ void Map::loadUnits(const QString &filename, GameInfo *gameInfo, GameStats *stat
     while (!in.atEnd())
     {
         QStringList rowStr = in.readLine().simplified().split(" ");
-        Block *block = getBlock(rowStr[0].toInt(), rowStr[1].toInt());
-        if (block != nullptr && block->getUnit() == nullptr)
+        if (rowStr.size() == 5)
         {
-            int unitId = rowStr[3].toInt();
-            int side = rowStr[2].toInt();
-            block->setUnit(unitId, side, unitInfo[unitId][6], rowStr[4].toInt());
-            if (side >= 0)
+            Block *block = getBlock(rowStr[0].toInt(), rowStr[1].toInt());
+            if (block != nullptr && block->getUnit() == nullptr)
             {
-                stats->addUnit(block->getUnit());
+                int unitId = rowStr[3].toInt();
+                int side = rowStr[2].toInt();
+                block->setUnit(unitId, side, unitInfo[unitId][6], rowStr[4].toInt());
+                if (side >= 0)
+                {
+                    stats->addUnit(block->getUnit());
+                }
             }
         }
     }

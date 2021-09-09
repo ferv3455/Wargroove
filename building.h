@@ -11,8 +11,8 @@ public:
 
     // NEW Getter and setter
     void setSide(int side);
+    virtual void getImages(QVector<QImage> *images) const;
     virtual bool isOperable() const;
-
 };
 
 #endif // BUILDING_H

@@ -85,6 +85,12 @@ void Block::setUnit(Unit *newUnit)
     m_unit = newUnit;
 }
 
+void Block::setTerrain(int terrain)
+{
+    m_nTerrain = terrain;
+    m_terrainImage = QImage(":/image/terrain/" + QString::number(m_nTerrain));
+}
+
 Unit *Block::getUnit() const
 {
     return m_unit;

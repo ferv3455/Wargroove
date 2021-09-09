@@ -1,6 +1,8 @@
 #ifndef UNITSELECTIONWIDGET_H
 #define UNITSELECTIONWIDGET_H
 
+#include "descriptionwidget.h"
+
 #include <QWidget>
 #include <QLabel>
 #include <QListWidget>
@@ -15,7 +17,7 @@ class UnitSelectionWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit UnitSelectionWidget(QWidget *parent = nullptr);
+    explicit UnitSelectionWidget(GameInfo *gameInfo, QWidget *parent = nullptr);
     ~UnitSelectionWidget();
 
     // The widget used in each list widget item
@@ -43,8 +45,12 @@ public slots:
 
 private:
     Ui::UnitSelectionWidget *ui;
+    DescriptionWidget *m_descriptionWidget;
     QListWidget *m_listWidget;
     QList<QListWidgetItem *> m_listWidgetItems;
+    GameInfo *m_gameInfo;
+
+    int m_nKind;
 
 signals:
     void confirm(int);

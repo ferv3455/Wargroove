@@ -1,7 +1,8 @@
 <RCC>
     <qresource prefix="/maps/terrain">
         <file alias="river_delta">maps/river_delta.map</file>
-        <file alias="default">maps/map.map</file>
+        <file alias="tiny">maps/tiny.map</file>
+        <file alias="standard">maps/standard.map</file>
     </qresource>
     <qresource prefix="/gameinfo">
         <file>gameinfo/damage_matrix.txt</file>
@@ -12,6 +13,9 @@
         <file>Wargroove.png</file>
         <file alias="pointer">image/pointer/pointer1.png</file>
         <file>fonts/zpix.ttf</file>
+        <file>image/bricks_background.png</file>
+        <file>Main_logo.png</file>
+        <file>wargroove-bg.png</file>
     </qresource>
     <qresource prefix="/image/unit">
         <file alias="0">image/unit/soldier.png</file>
@@ -116,5 +120,49 @@
     </qresource>
     <qresource prefix="/maps/units">
         <file alias="river_delta">maps/river_delta_units.map</file>
+        <file alias="standard">maps/standard_units.map</file>
+        <file alias="tiny">maps/tiny_units.map</file>
     </qresource>
+    <qresource prefix="/image/background">
+        <file alias="5">image/biome/beach.png</file>
+        <file alias="8">image/biome/bridge.png</file>
+        <file alias="7">image/biome/deep_sea.png</file>
+        <file alias="3">image/biome/forest.png</file>
+        <file alias="4">image/biome/mountain.png</file>
+        <file alias="2">image/biome/plain.png</file>
+        <file alias="9">image/biome/reef.png</file>
+        <file alias="1">image/biome/road.png</file>
+        <file alias="6">image/biome/shallow_sea.png</file>
+        <file alias="0">image/biome/sky.png</file>
+    </qresource>
+    <qresource prefix="/image/unit_icon">
+        <file alias="11">image/unit_icon/Unit_Icon_Aeronaut.png</file>
+        <file alias="4">image/unit_icon/Unit_Icon_Archer.png</file>
+        <file alias="8">image/unit_icon/Unit_Icon_Ballista.png</file>
+        <file alias="10">image/unit_icon/Unit_Icon_Balloon.png</file>
+        <file alias="14">image/unit_icon/Unit_Icon_Barge.png</file>
+        <file alias="6">image/unit_icon/Unit_Icon_Cavalry.png</file>
+        <file alias="1">image/unit_icon/Unit_Icon_Dog.png</file>
+        <file alias="13">image/unit_icon/Unit_Icon_Dragon.png</file>
+        <file alias="5">image/unit_icon/Unit_Icon_Giant.png</file>
+        <file alias="16">image/unit_icon/Unit_Icon_Harpoon_Ship.png</file>
+        <file alias="3">image/unit_icon/Unit_Icon_Mage.png</file>
+        <file alias="12">image/unit_icon/Unit_Icon_Sky_Rider.png</file>
+        <file alias="0">image/unit_icon/Unit_Icon_Soldier.png</file>
+        <file alias="2">image/unit_icon/Unit_Icon_Spearman.png</file>
+        <file alias="9">image/unit_icon/Unit_Icon_Trebuchet.png</file>
+        <file alias="15">image/unit_icon/Unit_Icon_Turtle.png</file>
+        <file alias="7">image/unit_icon/Unit_Icon_Wagon.png</file>
+        <file alias="17">image/unit_icon/Unit_Icon_Warship.png</file>
+        <file alias="18">image/unit_icon/Unit_Icon_Commander.png</file>
+        <file alias="19">image/unit_icon/Unit_Icon_Building.png</file>
+    </qresource>
+    <qresource prefix="/image/move_icon">
+        <file alias="3">image/move_icon/Movement_Icon_Flying.png</file>
+        <file alias="1">image/move_icon/Movement_Icon_Riding.png</file>
+        <file alias="0">image/move_icon/Movement_Icon_Walking.png</file>
+        <file alias="4">image/move_icon/Movement_Icon_Water.png</file>
+        <file alias="2">image/move_icon/Movement_Icon_Wheels.png</file>
+    </qresource>
+    <qresource prefix="/image/unit_gif"/>
 </RCC>

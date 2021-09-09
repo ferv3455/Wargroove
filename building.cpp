@@ -47,7 +47,22 @@ void Building::setSide(int side)
     m_nSide = side;
 }
 
+void Building::getImages(QVector<QImage> *images) const
+{
+    images->clear();
+    if (m_nId <= 18)
+    {
+        Unit::getImages(images);
+    }
+    else
+    {
+        images->push_back(m_images[m_nSide + 1]);
+        images->push_back(m_images[m_nSide + 1]);
+    }
+}
+
+
 bool Building::isOperable() const
 {
-    return Unit::isOperable() || (m_nId == 19 && m_nSide == 0 && m_nInnerType >= 1 && m_nInnerType <= 3);
+    return Unit::isOperable() || (m_nId == 19 && m_nInnerType >= 1 && m_nInnerType <= 3);
 }

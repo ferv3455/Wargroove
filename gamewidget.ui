@@ -13,6 +13,14 @@
   <property name="windowTitle">
    <string>Game Window</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#GameWidget{
+	background-image: url(:/image/bricks_background.png);
+}</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <spacer name="verticalSpacer">
@@ -22,7 +30,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>668</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>

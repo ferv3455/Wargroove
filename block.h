@@ -24,6 +24,7 @@ public:
     // Getter and setter
     void setUnit(int unit, int side, int maxHP, int innerType = 0);
     void setUnit(Unit *newUnit);
+    void setTerrain(int terrain);
 
     Unit *getUnit() const;
     QPoint getCenter() const;

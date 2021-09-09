@@ -8,8 +8,11 @@
 #include "gamestats.h"
 #include "unitmover.h"
 #include "unitselectionwidget.h"
+#include "descriptionwidget.h"
+#include "battlewidget.h"
 
 #include <QObject>
+#include <QMediaPlayer>
 #include <QMenu>
 
 class GameProcessor : public QObject
@@ -20,8 +23,10 @@ public:
                            GameInfo *gameInfo,
                            Map *map,
                            GameStats *stats,
+                           QMediaPlayer *SEplayer,
                            TipsLabel *tipsLabel,
                            UnitSelectionWidget *unitSelectionWidget,
+                           DescriptionWidget *descriptionWidget,
                            QMenu *actionContextMenu,
                            QMenu *mainContextMenu,
                            QObject *parent = nullptr,
@@ -41,7 +46,7 @@ public:
     void updateCarrierBlocks(Block *block, Unit *unit);
 
     // create a unit
-    void createUnit(int, int);
+    void createUnit(int unitId, int side);
 
     // the interaction of two units (battle/get in/get out)
     void confrontUnit();
@@ -65,9 +70,14 @@ private:
     Map *m_map;                         // Game map
     GameStats *m_stats;                 // Game stats
 
+    // Sound Effect
+    QMediaPlayer *m_SEplayer;           // Sound effect
+
     // Widgets
     TipsLabel *m_tipsLabel;             // Tips label at the bottom of the screen
     UnitSelectionWidget *m_unitSelectionWidget;  // Unit selection widget
+    DescriptionWidget *m_descriptionWidget;      // Unit Description Widget
+    BattleWidget *m_battleWidget;       // Battle Widget
 
     QMenu *m_actionContextMenu;         // Action context menu
     QMenu *m_mainContextMenu;           // Main context menu

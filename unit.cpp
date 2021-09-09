@@ -70,8 +70,10 @@ void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
         painter->drawImage(rect, grayImage(m_images + 2 * m_nDirection + dynamicsId));
     }
 
-//    painter->setFont(QFont("Arial", 20, QFont::Bold));
-    painter->drawText(rect.center(), QString::number(m_nHealthPoint));
+    if (m_nHealthPoint < m_nMaxHealthPoint)
+    {
+        painter->drawText(rect.center(), QString::number(m_nHealthPoint * 10 / m_nMaxHealthPoint));
+    }
 }
 
 int Unit::getId() const
@@ -114,9 +116,16 @@ Unit *Unit::getCarrier() const
     return m_carryingUnit;
 }
 
+void Unit::getImages(QVector<QImage> *images) const
+{
+    images->clear();
+    images->push_back(m_images[0]);
+    images->push_back(m_images[1]);
+}
+
 bool Unit::isOperable() const
 {
-    return m_nId <= 18;
+    return m_nId <= 18 && m_nId >= 0;
 }
 
 bool Unit::isCarrier() const
