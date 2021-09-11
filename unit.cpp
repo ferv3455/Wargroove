@@ -1,5 +1,6 @@
 #include "unit.h"
 
+#include <QRandomGenerator>
 #include <QDebug>
 
 QImage Unit::grayImage(const QImage *image)
@@ -59,8 +60,10 @@ Unit::Unit(int unitId, int side, int maxHP, QObject *parent, int innerType, floa
     }
 }
 
-void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
+void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId, int side) const
 {
+    Q_UNUSED(side);
+
     if (m_bActive)
     {
         painter->drawImage(rect, m_images[2 * m_nDirection + dynamicsId]);
@@ -72,6 +75,7 @@ void Unit::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
 
     if (m_nHealthPoint < m_nMaxHealthPoint)
     {
+        painter->drawRect(rect.center().x() - 3, rect.center().y() - 17, 15, 20);
         painter->drawText(rect.center(), QString::number(m_nHealthPoint * 10 / m_nMaxHealthPoint));
     }
 }
@@ -168,7 +172,8 @@ bool Unit::injured(int damage)
 
 bool Unit::checkCritical() const
 {
-    return false;       // TODO: REFINED
+    int randomN = std::rand() % 10;
+    return randomN < 2;
 }
 
 void Unit::regenerate(double ratio)

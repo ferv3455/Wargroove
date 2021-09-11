@@ -17,6 +17,7 @@ BattleWidget::BattleWidget(Block *activeBlock, Block *passiveBlock,
       m_passiveBlock(passiveBlock),
       m_nActiveDamage(0),
       m_nPassiveDamage(0),
+      m_bActiveCritical(false),
       m_bActiveKilled(false),
       m_bPassiveKilled(false)
 {
@@ -28,7 +29,7 @@ BattleWidget::BattleWidget(Block *activeBlock, Block *passiveBlock,
     m_passiveLabel = new QLabel(ui->imageWidget);
     m_damageLabel = new QLabel(ui->imageWidget);
 
-    m_damageLabel->setGeometry(-100, -100, 100, 50);
+    m_damageLabel->setGeometry(-100, -100, 300, 50);
 
     // Initialize images
     QVector<QImage> v;
@@ -103,9 +104,10 @@ BattleWidget::~BattleWidget()
     delete ui;
 }
 
-void BattleWidget::setActiveAttack(int damage, bool killed)
+void BattleWidget::setActiveAttack(int damage, bool killed, bool critical)
 {
     m_nActiveDamage = damage;
+    m_bActiveCritical = critical;
     m_bActiveKilled = killed;
 }
 
@@ -177,7 +179,7 @@ void BattleWidget::activeAttack()
     activeReturnAnimation->setEndValue(QPoint(100, 70));
     activeReturnAnimation->setEasingCurve(QEasingCurve::Linear);
 
-    m_damageLabel->setText(QString::number(-m_nActiveDamage));
+    m_damageLabel->setText((m_bActiveCritical ? "CRIT. " : " ") + QString::number(-m_nActiveDamage));
 
     QPropertyAnimation *activeDamageAnimation = new QPropertyAnimation(m_damageLabel, "pos", this);
     activeDamageAnimation->setDuration(1000);

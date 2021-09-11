@@ -22,7 +22,7 @@ public:
                           GameInfo *gameInfo, QWidget *parent = nullptr);
     ~BattleWidget();
 
-    void setActiveAttack(int damage, bool killed);
+    void setActiveAttack(int damage, bool killed, bool critical);
     void setPassiveAttack(int damage, bool killed);
 
     void adjustScreen();
@@ -60,6 +60,7 @@ private:
     Block *m_passiveBlock;
     int m_nActiveDamage;
     int m_nPassiveDamage;
+    bool m_bActiveCritical;
     bool m_bActiveKilled;
     bool m_bPassiveKilled;
 

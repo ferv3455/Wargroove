@@ -11,20 +11,38 @@ QVector<QPointF> Block::sm_pbasePoints =
     QPointF(-1, 0.6)
 };
 
-Block::Block(int terrain, int row, int col, QObject *parent)
+QImage Block::grayImage(const QImage *image)
+{
+    QImage img(*image);
+    for (int i = 0; i < img.width(); ++i)
+    {
+        for (int j = 0; j < img.height(); ++j)
+        {
+            QColor color = img.pixelColor(i, j);
+            int gray = qGray(color.rgb());
+            int alpha = color.alpha();
+            img.setPixelColor(i, j, QColor(gray, gray, gray, alpha));
+        }
+    }
+    return img;
+}
+
+Block::Block(int terrain, int row, int col, QObject *parent, bool fogMode)
     : QObject(parent),
       m_area(),
       m_pCenter(),
       m_nBlockSize(0),
 
       m_nTerrain(terrain),
-      m_terrainImage(":/image/terrain/" + QString::number(m_nTerrain)),
       m_unit(nullptr),
+
+      m_bVisible(!fogMode),
 
       m_row(row),
       m_col(col)
 {
-
+    m_terrainImage[0] = QImage(":/image/terrain/" + QString::number(m_nTerrain));
+    m_terrainImage[1] = grayImage(m_terrainImage);
 }
 
 void Block::updateArea(QPoint center, int size)
@@ -46,19 +64,42 @@ void Block::paint(QPainter *painter, int part, int dynamicsId) const
 {
     if (part != 2)
     {
+        if (m_bVisible)
+        {
+            painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
+                                     m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)),
+                               m_terrainImage[0]);
+        }
+        else
+        {
+            painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
+                                     m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)),
+                               m_terrainImage[1]);
+        }
+
         painter->setPen(QPen(QColor(0, 0, 0, 20), 3));
-        painter->drawImage(QRect(m_pCenter - QPoint(m_nBlockSize, 1.25 * m_nBlockSize),
-                                 m_pCenter + QPoint(m_nBlockSize, 1.25 * m_nBlockSize)), m_terrainImage);
         painter->drawConvexPolygon(m_area);
     }
 
     if (part != 1 && m_unit != nullptr)
     {
         painter->setPen(Qt::white);
-        m_unit->paint(painter,
-                      QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
-                            m_pCenter + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
-                      dynamicsId);
+        painter->setBrush(Qt::black);
+        if (m_unit->getId() == 19 && !m_bVisible)
+        {
+            // draw nobody-owned building
+            m_unit->paint(painter,
+                          QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
+                                m_pCenter + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
+                          dynamicsId, -1);
+        }
+        else if (m_bVisible)
+        {
+            m_unit->paint(painter,
+                          QRect(m_pCenter - QPoint(m_nBlockSize, 1.5 * m_nBlockSize),
+                                m_pCenter + QPoint(m_nBlockSize, 0.5 * m_nBlockSize)),
+                          dynamicsId);
+        }
     }
 }
 
@@ -88,7 +129,13 @@ void Block::setUnit(Unit *newUnit)
 void Block::setTerrain(int terrain)
 {
     m_nTerrain = terrain;
-    m_terrainImage = QImage(":/image/terrain/" + QString::number(m_nTerrain));
+    m_terrainImage[0] = QImage(":/image/terrain/" + QString::number(m_nTerrain));
+    m_terrainImage[1] = grayImage(m_terrainImage);
+}
+
+void Block::setVisible(bool visible)
+{
+    m_bVisible = visible;
 }
 
 Unit *Block::getUnit() const
@@ -119,5 +166,10 @@ int Block::getRow() const
 int Block::getColumn() const
 {
     return m_col;
+}
+
+bool Block::isVisible() const
+{
+    return m_bVisible;
 }
 

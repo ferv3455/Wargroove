@@ -21,6 +21,9 @@ public:
     int m_nBlockSize;
     int m_nZoomScale;
 
+    bool m_bFogMode;
+    bool m_bAI;
+
     QString m_backgroundMusic;
     int m_nVolume;
     int m_nSEVolume;

@@ -18,6 +18,11 @@ public:
     const QStringList &getUnitNames() const;
     const QStringList &getCommanderNames() const;
     const QStringList &getBuildingNames() const;
+
+    const QStringList &getUnitDescription() const;
+    const QStringList &getCommanderDescription() const;
+    const QStringList &getBuildingDescription() const;
+
     const QStringList &getTerrainNames() const;
 
 private:
@@ -32,6 +37,11 @@ private:
     QStringList m_sUnitNames;
     QStringList m_sCommanderNames;
     QStringList m_sBuildingNames;
+
+    QStringList m_sUnitDescription;
+    QStringList m_sCommanderDescription;
+    QStringList m_sBuildingDescription;
+
     QStringList m_sTerrainNames;
 };
 

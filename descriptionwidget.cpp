@@ -93,7 +93,7 @@ void DescriptionWidget::adjustBackground()
         // Reset size
         int parentWidth = static_cast<QWidget *>(parent())->width();
         int parentHeight = static_cast<QWidget *>(parent())->height();
-        setGeometry(parentWidth / 6, parentHeight / 6, parentWidth * 2 / 3, parentHeight * 2 / 3);
+        setGeometry(parentWidth / 2 - 500, parentHeight / 2 - 350, 1000, 700);
     }
 
     if (m_displayingBlock->getUnit() != nullptr)
@@ -222,6 +222,21 @@ void DescriptionWidget::updateScreen()
 
         // Set description
         ui->descriptionLabel->show();
+        if (unitId < 18)
+        {
+            // ordinary units
+            ui->descriptionLabel->setText(m_gameInfo->getUnitDescription()[unitId]);
+        }
+        else if (unitId == 18)
+        {
+            // commander
+            ui->descriptionLabel->setText(m_gameInfo->getCommanderDescription()[0]);
+        }
+        else
+        {
+            // building
+            ui->descriptionLabel->setText(m_gameInfo->getBuildingDescription()[unit->getInnerType()]);
+        }
 
         // Set effective and vulnerable box
         float **damageMatrix = m_gameInfo->getDamageMatrix();
@@ -254,6 +269,11 @@ void DescriptionWidget::updateScreen()
 
             }
         }
+        for (; effIndex < 7; effIndex++)
+        {
+            m_interunitLabels[0][effIndex]->setPixmap(QPixmap());
+            m_interunitLabels[0][effIndex]->setStyleSheet("");
+        }
 
         // Void units
         int voidIndex = 0;
@@ -283,10 +303,11 @@ void DescriptionWidget::updateScreen()
                 voidIndex++;
             }
         }
-//        for (; voidIndex < 7; voidIndex++)
-//        {
-
-//        }
+        for (; voidIndex < 7; voidIndex++)
+        {
+            m_interunitLabels[1][voidIndex]->setPixmap(QPixmap());
+            m_interunitLabels[1][voidIndex]->setStyleSheet("");
+        }
 
         // Vulnerable units
         int vulIndex = 0;
@@ -315,6 +336,11 @@ void DescriptionWidget::updateScreen()
                 m_interunitLabels[2][vulIndex]->setStyleSheet("background-color: #cd4c18;");
                 vulIndex++;
             }
+        }
+        for (; vulIndex < 7; vulIndex++)
+        {
+            m_interunitLabels[2][vulIndex]->setPixmap(QPixmap());
+            m_interunitLabels[2][vulIndex]->setStyleSheet("");
         }
 
         ui->interunitsWidget->show();

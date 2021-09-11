@@ -18,7 +18,7 @@ public:
                  int blockSize = 100,
                  QPoint offset = QPoint(200, 200));
     ~Map();
-    void loadTerrain(const QString &filename);
+    void loadTerrain(const QString &filename, bool fogMode = false);
     void loadUnits(const QString &filename, GameInfo *gameInfo, GameStats *stats);
 
     // Get functions
@@ -29,7 +29,9 @@ public:
     QPoint getCenterPosition(const Block *block) const;
     int getBlockSize() const;
     int getScale() const;
-    void getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) const;
+    void getAdjacentBlocks(QVector<Block *> &blockVector, Block *block) const;
+    void getAdjacentBlocks(QVector<Block *> &blockVector, Block *block, int rangeHigh, int rangeLow = 0) const;
+    void getAllBlocks(QVector<Block *> &blockVector, int side) const;
 
     // Adjust functions
     void adjustOffset(QPoint deltaPos);

@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/maps/terrain">
         <file alias="river_delta">maps/river_delta.map</file>
-        <file alias="tiny">maps/tiny.map</file>
+        <file alias="ai_test">maps/ai_test.map</file>
         <file alias="standard">maps/standard.map</file>
     </qresource>
     <qresource prefix="/gameinfo">
@@ -121,7 +121,7 @@
     <qresource prefix="/maps/units">
         <file alias="river_delta">maps/river_delta_units.map</file>
         <file alias="standard">maps/standard_units.map</file>
-        <file alias="tiny">maps/tiny_units.map</file>
+        <file alias="ai_test">maps/ai_test_units.map</file>
     </qresource>
     <qresource prefix="/image/background">
         <file alias="5">image/biome/beach.png</file>

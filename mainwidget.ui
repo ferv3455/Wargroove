@@ -113,7 +113,7 @@ QPushButton:pressed {
 }</string>
           </property>
           <property name="text">
-           <string>Play</string>
+           <string>Play Game</string>
           </property>
          </widget>
         </item>

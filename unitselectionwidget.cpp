@@ -99,9 +99,10 @@ void UnitSelectionWidget::adjustSize()
 {
     int parentWidth = static_cast<QWidget *>(parent())->width();
     int parentHeight = static_cast<QWidget *>(parent())->height();
-    setGeometry(parentWidth / 6, parentHeight / 6, parentWidth * 2 / 3, parentHeight * 2 / 3);
+    setGeometry(parentWidth / 2 - 625, parentHeight / 2 - 350, 1250, 700);
     m_descriptionWidget->show();
     m_descriptionWidget->adjustBackground();
+    m_descriptionWidget->setFixedWidth(800);
 }
 
 void UnitSelectionWidget::selected()

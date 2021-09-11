@@ -29,7 +29,7 @@ Map::~Map()
     delete m_matrix;
 }
 
-void Map::loadTerrain(const QString &filename)
+void Map::loadTerrain(const QString &filename, bool fogMode)
 {
     QFile data(filename);
     if (!data.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -62,7 +62,7 @@ void Map::loadTerrain(const QString &filename)
             }
             else
             {
-                m_matrix[i][j] = new Block(id, i, j, this);
+                m_matrix[i][j] = new Block(id, i, j, this, fogMode);
             }
         }
     }
@@ -190,7 +190,7 @@ int Map::getScale() const
     return m_nScale;
 }
 
-void Map::getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) const
+void Map::getAdjacentBlocks(QVector<Block *> &blockVector, Block *block) const
 {
     if (block == nullptr)
     {
@@ -203,6 +203,7 @@ void Map::getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) c
         {{-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, 0}, {1, 1}}         // odd rows
     };          // index delta of blocks that are adjacent to the selected block
 
+    blockVector.clear();
     int row = block->getRow();
     int col = block->getColumn();
     int parity = row % 2;
@@ -213,6 +214,109 @@ void Map::getAdjacentBlocks(QVector<Block *> &blockVector, const Block *block) c
         if (temp != nullptr)
         {
             blockVector.push_back(temp);
+        }
+    }
+}
+
+void Map::getAdjacentBlocks(QVector<Block *> &blockVector, Block *block, int rangeHigh, int rangeLow) const
+{
+    if (block == nullptr)
+    {
+        return;
+    }
+
+    struct Vertex
+    {
+        Block *block;
+        int distance;
+    };
+
+    QVector<Vertex> remainingBlocks;
+    QVector<Vertex> countedBlocks;
+    remainingBlocks.push_back({block, 0});    // the vector only has the origin at first
+
+    while (!remainingBlocks.isEmpty())
+    {
+        // sort by distance, get the one with the shortest distance
+        std::sort(remainingBlocks.begin(), remainingBlocks.end(), [](const Vertex & v1, const Vertex & v2)
+        {
+            return v1.distance > v2.distance;
+        });
+
+        const Vertex temp = remainingBlocks.last();
+        remainingBlocks.pop_back();
+        if (temp.distance > rangeHigh)           // other blocks are all out of reach
+        {
+            break;
+        }
+
+        QVector<Block *> adjacentBlocks;
+        getAdjacentBlocks(adjacentBlocks, temp.block);
+
+        for (const auto &adjBlock : qAsConst(adjacentBlocks))
+        {
+            int distance = temp.distance + 1;
+            bool counted = false;
+
+            // find out whether the block is counted
+            for (auto iter = remainingBlocks.begin(); iter != remainingBlocks.end(); iter++)
+            {
+                if (iter->block == adjBlock)
+                {
+                    // yes
+                    counted = true;
+                    break;
+                }
+            }
+
+            if (!counted)
+            {
+                for (auto iter = countedBlocks.begin(); iter != countedBlocks.end(); iter++)
+                {
+                    if (iter->block == adjBlock)
+                    {
+                        // yes
+                        counted = true;
+                        break;
+                    }
+                }
+
+                if (!counted)
+                {
+                    // not counted
+                    remainingBlocks.push_back({adjBlock, distance});
+                }
+            }
+        }
+
+        countedBlocks.push_back(temp);
+    }
+
+    blockVector.clear();
+    for (const auto &vertex : qAsConst(countedBlocks))
+    {
+        if (vertex.distance >= rangeLow)
+        {
+            blockVector.append(vertex.block);
+        }
+    }
+}
+
+void Map::getAllBlocks(QVector<Block *> &blockVector, int side) const
+{
+    blockVector.clear();
+    int rows = m_size.height();
+    int cols = m_size.width();
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            Block *block = getBlock(i, j);
+            if (block != nullptr && block->getUnit() != nullptr && block->getUnit()->getSide() == side)
+            {
+                blockVector.push_back(block);
+            }
         }
     }
 }

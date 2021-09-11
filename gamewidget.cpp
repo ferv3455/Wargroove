@@ -9,7 +9,8 @@ GameWidget::GameWidget(Settings *settings, QWidget *parent)
     : QWidget(parent),
       ui(new Ui::GameWidget),
       m_bClosing(false),
-      m_pDragBeginPoint(0, 0)
+      m_pDragBeginPoint(0, 0),
+      m_bMouseEventConnected(false)
 {
     // Initialize cursor
     QPixmap pixmap(":/pointer");
@@ -18,6 +19,8 @@ GameWidget::GameWidget(Settings *settings, QWidget *parent)
 
     // Initialize ui
     ui->setupUi(this);
+    ui->unitMoveWidget->hide();
+    ui->gameOverLabel->hide();
 
     // Initialize background
     setAttribute(Qt::WA_StyledBackground, true);
@@ -33,7 +36,7 @@ GameWidget::GameWidget(Settings *settings, QWidget *parent)
     int mapIndex = m_settings->m_nCurrentMap;
     m_map = new Map(m_settings->m_mapSizes[mapIndex], this,
                     m_settings->m_nBlockSize, QPoint(100, 100));
-    m_map->loadTerrain(":/maps/terrain/" + m_settings->m_mapNames[mapIndex]);
+    m_map->loadTerrain(":/maps/terrain/" + m_settings->m_mapNames[mapIndex], m_settings->m_bFogMode);
     m_map->loadUnits(":/maps/units/" + m_settings->m_mapNames[mapIndex], m_gameInfo, m_stats);
 
     // Initialize graphic widgets
@@ -79,9 +82,15 @@ GameWidget::GameWidget(Settings *settings, QWidget *parent)
     m_SEPlayer->setVolume(m_settings->m_nSEVolume);
 
     // Initialize game engine
-    m_processer = new GameProcessor(m_settings, m_gameInfo, m_map, m_stats, m_SEPlayer,
-                                    m_tipsLabel, m_unitSelectionWidget, m_descriptionWidget,
+    m_processor = new GameProcessor(m_settings, m_gameInfo, m_map, m_stats, m_SEPlayer,
+                                    m_tipsLabel, ui->unitMoveWidget,
+                                    m_unitSelectionWidget, m_descriptionWidget,
                                     m_actionContextMenu, m_mainContextMenu, this);
+    m_ai = new AIProcessor *[1];        // Currently one ai
+    for (int i = 0; i < 1; i++)     // Number of AIs
+    {
+        m_ai[i] = new AIProcessor(m_settings, m_gameInfo, m_map, m_stats, m_SEPlayer, this, i + 1);
+    }
 
     // Initialize graphics timers
     m_graphicsTimer = new QTimer(this);
@@ -92,14 +101,15 @@ GameWidget::GameWidget(Settings *settings, QWidget *parent)
     m_dynamicsTimer->start(300);
     connect(m_dynamicsTimer, &QTimer::timeout, m_map, &Map::updateDynamics);
 
-    // Connect other signals to slots
-    connect(this, &GameWidget::mouseLeftButtonClicked, m_processer, &GameProcessor::selectPosition);
-    connect(this, &GameWidget::mouseLeftButtonReleased, m_processer, &GameProcessor::unselectPosition);
-    connect(this, &GameWidget::mouseRightButtonClicked, m_processer, &GameProcessor::escapeMenu);
-    connect(this, &GameWidget::mouseMiddleButtonMoved, m_processer, &GameProcessor::moveMap);
-    connect(this, &GameWidget::mouseMoved, m_processer, &GameProcessor::mouseToPosition);
-    connect(this, &GameWidget::mouseScrolled, m_processer, &GameProcessor::zoomMap);
+    // Connect signals related to AI
+    connect(m_processor, &GameProcessor::roundForSide, this, &GameWidget::initializeSide);
+    for (int i = 0; i < 1; i++)     // Number of AIs
+    {
+        connect(m_ai[i], &AIProcessor::finished, m_processor, &GameProcessor::changeSide);
+    }
+    initializeSide(0);
 
+    // Connect other signals to slots
     connect(m_mediaPlayer, &QMediaPlayer::stateChanged, this, &GameWidget::resetMedia);
 
     // Track mouse movements
@@ -121,7 +131,11 @@ void GameWidget::paintEvent(QPaintEvent *event)
     painter->setFont(font);
 
     m_map->paint(painter, 1);       // terrain
-    m_processer->paint(painter);
+    m_processor->paint(painter);
+    for (int i = 0; i < 1; i++)
+    {
+        m_ai[i]->paint(painter);
+    }
     m_map->paint(painter, 2);       // units
 
     delete painter;
@@ -194,5 +208,54 @@ void GameWidget::resetMedia(QMediaPlayer::State newState)
     if (!m_bClosing && newState == QMediaPlayer::StoppedState)
     {
         m_mediaPlayer->play();
+    }
+}
+
+void GameWidget::initializeSide(int side)
+{
+    if (m_settings->m_bAI)
+    {
+        // Single player: activate AI and disconnect signals properly
+        if (side <= 0)
+        {
+            if (!m_bMouseEventConnected)
+            {
+                m_bMouseEventConnected = true;
+                connect(this, &GameWidget::mouseLeftButtonClicked, m_processor, &GameProcessor::selectPosition);
+                connect(this, &GameWidget::mouseLeftButtonReleased, m_processor, &GameProcessor::unselectPosition);
+                connect(this, &GameWidget::mouseRightButtonClicked, m_processor, &GameProcessor::escapeMenu);
+                connect(this, &GameWidget::mouseMiddleButtonMoved, m_processor, &GameProcessor::moveMap);
+                connect(this, &GameWidget::mouseMoved, m_processor, &GameProcessor::mouseToPosition);
+                connect(this, &GameWidget::mouseScrolled, m_processor, &GameProcessor::zoomMap);
+            }
+        }
+        else
+        {
+            if (m_bMouseEventConnected)
+            {
+                m_bMouseEventConnected = false;
+                disconnect(this, &GameWidget::mouseLeftButtonClicked, m_processor, &GameProcessor::selectPosition);
+                disconnect(this, &GameWidget::mouseLeftButtonReleased, m_processor, &GameProcessor::unselectPosition);
+                disconnect(this, &GameWidget::mouseRightButtonClicked, m_processor, &GameProcessor::escapeMenu);
+                disconnect(this, &GameWidget::mouseMiddleButtonMoved, m_processor, &GameProcessor::moveMap);
+                disconnect(this, &GameWidget::mouseMoved, m_processor, &GameProcessor::mouseToPosition);
+                disconnect(this, &GameWidget::mouseScrolled, m_processor, &GameProcessor::zoomMap);
+            }
+            m_ai[side - 1]->activate();
+        }
+    }
+    else
+    {
+        // Multiplayer: no AIs, connect signals
+        if (!m_bMouseEventConnected)
+        {
+            m_bMouseEventConnected = true;
+            connect(this, &GameWidget::mouseLeftButtonClicked, m_processor, &GameProcessor::selectPosition);
+            connect(this, &GameWidget::mouseLeftButtonReleased, m_processor, &GameProcessor::unselectPosition);
+            connect(this, &GameWidget::mouseRightButtonClicked, m_processor, &GameProcessor::escapeMenu);
+            connect(this, &GameWidget::mouseMiddleButtonMoved, m_processor, &GameProcessor::moveMap);
+            connect(this, &GameWidget::mouseMoved, m_processor, &GameProcessor::mouseToPosition);
+            connect(this, &GameWidget::mouseScrolled, m_processor, &GameProcessor::zoomMap);
+        }
     }
 }

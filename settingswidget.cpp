@@ -13,20 +13,6 @@ SettingsWidget::SettingsWidget(Settings *settings, QWidget *parent) :
     // Initialize ui
     ui->setupUi(this);
 
-    // Initialize background
-    setAttribute(Qt::WA_StyledBackground, true);
-    QPalette palette;
-    palette.setBrush(backgroundRole(), QBrush(QImage(":/wargroove-bg.png").scaled(size(),
-                     Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation)));
-    setPalette(palette);
-
-    // Initialize menu
-    for (const auto &mapName : qAsConst(m_settings->m_mapNames))
-    {
-        ui->mapComboBox->addItem(mapName);
-    }
-    ui->mapComboBox->setCurrentIndex(m_settings->m_nCurrentMap);
-
     // Connect signals and slots
     connect(ui->backButton, &QPushButton::clicked, this, &SettingsWidget::close);
 
@@ -70,7 +56,6 @@ SettingsWidget::SettingsWidget(Settings *settings, QWidget *parent) :
         m_settings->m_nBlockSize = value;
     });
 
-    connect(ui->mapComboBox, SIGNAL(currentIndexChanged(int)), SLOT(changeMap(int)));
 
     // Initial values
     ui->volumeSlider->setValue(m_settings->m_nVolume);

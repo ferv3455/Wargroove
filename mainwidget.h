@@ -3,6 +3,7 @@
 
 #include "gamewidget.h"
 #include "settingswidget.h"
+#include "gamemodewidget.h"
 
 #include <QWidget>
 #include <QPushButton>
@@ -25,6 +26,7 @@ public:
 public slots:
     void retranslate();
     void showGame();
+    void showGameMode();
     void showSettings();
     void returnToMenu();
     void resetMedia(QMediaPlayer::State);
@@ -34,6 +36,7 @@ private:
     Ui::MainWidget *ui;
     GameWidget *m_gameWidget;
     SettingsWidget *m_settingsWidget;
+    GameModeWidget *m_gameModeWidget;
 
     QPushButton *m_pushButton_1;
     QPushButton *m_pushButton_2;

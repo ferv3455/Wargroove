@@ -10,11 +10,13 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    aiprocessor.cpp \
     battlewidget.cpp \
     block.cpp \
     building.cpp \
     descriptionwidget.cpp \
     gameinfo.cpp \
+    gamemodewidget.cpp \
     gameprocessor.cpp \
     gamestats.cpp \
     gamewidget.cpp \
@@ -29,11 +31,13 @@ SOURCES += \
     unitselectionwidget.cpp
 
 HEADERS += \
+    aiprocessor.h \
     battlewidget.h \
     block.h \
     building.h \
     descriptionwidget.h \
     gameinfo.h \
+    gamemodewidget.h \
     gameprocessor.h \
     gamestats.h \
     gamewidget.h \
@@ -49,6 +53,7 @@ HEADERS += \
 FORMS += \
     battlewidget.ui \
     descriptionwidget.ui \
+    gamemodewidget.ui \
     gamewidget.ui \
     mainwidget.ui \
     settingswidget.ui \

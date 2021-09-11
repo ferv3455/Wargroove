@@ -43,7 +43,7 @@ GameInfo::GameInfo(QObject *parent)
     };
     m_sBuildingNames = QStringList
     {
-        tr("Base"),         // 19_0
+        tr("Stronghold"),   // 19_0
         tr("Barrack"),      // 19_1
         tr("Tower"),        // 19_2
         tr("Port"),         // 19_3
@@ -64,8 +64,45 @@ GameInfo::GameInfo(QObject *parent)
         tr("Reef")          // 9
     };
 
-    // Initialize unit descriptions
+    // Initialize descriptions
+    m_sUnitDescription = QStringList
+    {
+        tr("Basic infantry, useful for capturing structures."),
+        tr("A quick unit."),
+        tr("Slower, more powerful infantry."),
+        tr("A powerful unit built to combat air threats."),
+        tr("Ranged ground units able to move and attack in the same turn."),
+        tr("An immensely powerful unit, especially during critical hits."),
+        tr("Powerful, mobile ground unit."),
+        tr("Capable of quickly transporting units that would otherwise travel by foot."),
+        tr("Ranged ground to air unit, unable to move and attack in the same turn."),
+        tr("Powerful long range unit, unable to move and attack in the same turn."),
 
+        tr("Aircraft able to transport all ground units."),
+        tr("Immensely mobile units, useful for crossing enemy lines."),
+        tr("Air-to-air unit, able to create huge damage during critical hits."),
+        tr("Incredibly powerful air-to-ground unit, especially during critical hits."),
+
+        tr("Boats able to transport all ground units across water."),
+        tr("Powerful naval unit, built to conquer the water."),
+        tr("Ranged water unit, able to attack air and sea."),
+        tr("An immensely powerful long range unit.")
+    };
+
+    m_sCommanderDescription = QStringList
+    {
+        tr("Most powerful ground unit type. Having no commanders results in a loss.")
+    };
+
+    m_sBuildingDescription = QStringList
+    {
+        tr("Special buildings which cannot be captured. Losing it results in a loss."),
+        tr("Produces Land Units."),
+        tr("Produces Air Units."),
+        tr("Produces Naval Units."),
+        tr("The primary building type, able to generate income for players."),
+        tr("Functionally identical to Villages, but are positioned within water tiles.")
+    };
 
     // Initialize terrain info
     m_terrainInfo = new int *[m_nTerrainNumber + 1];
@@ -234,4 +271,19 @@ const QStringList &GameInfo::getBuildingNames() const
 const QStringList &GameInfo::getTerrainNames() const
 {
     return m_sTerrainNames;
+}
+
+const QStringList &GameInfo::getUnitDescription() const
+{
+    return m_sUnitDescription;
+}
+
+const QStringList &GameInfo::getCommanderDescription() const
+{
+    return m_sCommanderDescription;
+}
+
+const QStringList &GameInfo::getBuildingDescription() const
+{
+    return m_sBuildingDescription;
 }

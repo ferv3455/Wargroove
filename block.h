@@ -11,7 +11,7 @@ class Block : public QObject
 {
     Q_OBJECT
 public:
-    explicit Block(int terrain, int row, int col, QObject *parent = nullptr);
+    explicit Block(int terrain, int row, int col, QObject *parent = nullptr, bool fogMode = false);
 
     void updateArea(QPoint center, int size);
 
@@ -25,6 +25,7 @@ public:
     void setUnit(int unit, int side, int maxHP, int innerType = 0);
     void setUnit(Unit *newUnit);
     void setTerrain(int terrain);
+    void setVisible(bool visible);
 
     Unit *getUnit() const;
     QPoint getCenter() const;
@@ -32,6 +33,10 @@ public:
     int getTerrain() const;
     int getRow() const;
     int getColumn() const;
+    bool isVisible() const;
+
+    // Convert Image color to gray
+    static QImage grayImage(const QImage *image);
 
 private:
     static QVector<QPointF> sm_pbasePoints;
@@ -42,9 +47,12 @@ private:
     int m_nBlockSize;        // size of the block
 
     // Properties
-    int m_nTerrain;           // map terrain (1~9)
-    QImage m_terrainImage;   // depict terrain
+    int m_nTerrain;          // map terrain (1~9)
+    QImage m_terrainImage[2];   // depict terrain
     Unit *m_unit;            // army unit (nullptr - nothing)
+
+    // Fog mode
+    bool m_bVisible;         // Whether a block can be seen
 
     int m_row;
     int m_col;

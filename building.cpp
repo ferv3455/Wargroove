@@ -25,9 +25,16 @@ Building::Building(int unitId, int side, int maxHP, QObject *parent, int innerTy
     }
 }
 
-void Building::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
+void Building::paint(QPainter *painter, const QRect &rect, int dynamicsId, int side) const
 {
     Q_UNUSED(dynamicsId);
+
+    if (side >= -1)
+    {
+        // special request
+        painter->drawImage(rect, grayImage(m_images + side + 1));
+        return;
+    }
 
     if (m_bActive)
     {
@@ -38,8 +45,11 @@ void Building::paint(QPainter *painter, const QRect &rect, int dynamicsId) const
         painter->drawImage(rect, grayImage(m_images + m_nSide + 1));
     }
 
-//    painter->setFont(QFont("Arial", 20, QFont::Bold));
-    painter->drawText(rect.center(), QString::number(m_nHealthPoint));
+    if (m_nHealthPoint < m_nMaxHealthPoint && m_nHealthPoint > 0)
+    {
+        painter->drawRect(rect.center().x() - 3, rect.center().y() - 17, 15, 20);
+        painter->drawText(rect.center(), QString::number(m_nHealthPoint * 10 / m_nMaxHealthPoint));
+    }
 }
 
 void Building::setSide(int side)

@@ -25,6 +25,7 @@ public:
                            GameStats *stats,
                            QMediaPlayer *SEplayer,
                            TipsLabel *tipsLabel,
+                           QWidget *moveWidget,
                            UnitSelectionWidget *unitSelectionWidget,
                            DescriptionWidget *descriptionWidget,
                            QMenu *actionContextMenu,
@@ -45,11 +46,16 @@ public:
     // carrier-related blocks
     void updateCarrierBlocks(Block *block, Unit *unit);
 
+    // visible blocks in fog mode
+    void updateVisibleBlocks();
+
     // create a unit
     void createUnit(int unitId, int side);
 
     // the interaction of two units (battle/get in/get out)
     void confrontUnit();
+
+    void checkWin();
 
 public slots:
     void processStage(int);
@@ -75,6 +81,7 @@ private:
 
     // Widgets
     TipsLabel *m_tipsLabel;             // Tips label at the bottom of the screen
+    QWidget *m_moveWidget;              // Move widget at the top-left of the screen
     UnitSelectionWidget *m_unitSelectionWidget;  // Unit selection widget
     DescriptionWidget *m_descriptionWidget;      // Unit Description Widget
     BattleWidget *m_battleWidget;       // Battle Widget
@@ -98,22 +105,26 @@ private:
 
     // Other members
     int m_nStage;                       // Stage of a round
+    int m_nRound;                       // Round of the battle
+
     Block *m_selectedBlock;             // Selected block
     Block *m_cursorBlock;               // The block with the pointer
 
     int m_nMovesLeft;                   // Move costs left
     QVector<Block *> m_movingRoute;     // Route saved
 
-    QVector<Block *> m_accessibleBlocks;// Accessible blocks highlighted when choosing the route
-    QVector<Block *> m_attackableBlocks;// Attackable blocks highlighted when choosing the route
-    QVector<Block *> m_capturableBlocks;// Capturable blocks highlighted when choosing the route
-    QVector<Block *>m_carrierBlocks;    // Blocks highlighted that are related to carriers
+    QVector<const Block *> m_accessibleBlocks;// Accessible blocks highlighted when choosing the route
+    QVector<const Block *> m_attackableBlocks;// Attackable blocks highlighted when choosing the route
+    QVector<const Block *> m_capturableBlocks;// Capturable blocks highlighted when choosing the route
+    QVector<const Block *> m_carrierBlocks;   // Blocks highlighted that are related to carriers
 
     Unit *m_tempUnit;                   // Used when creating a unit
 
 signals:
     void enterStage(int);
     void endOfTurn();
+    void roundForSide(int);
+    void gameClosed();
 };
 
 #endif // GAMEPROCESSOR_H

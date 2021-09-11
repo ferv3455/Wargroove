@@ -12,7 +12,7 @@ class Unit : public QObject
 public:
     explicit Unit(int unitId, int side, int maxHP, QObject *parent = nullptr,
                   int innerType = 0, float HPPercentage = 1.0);
-    virtual void paint(QPainter *painter, const QRect &rect, int dynamicsId = 0) const;
+    virtual void paint(QPainter *painter, const QRect &rect, int dynamicsId = 0, int side = -8) const;
 
     // Getters and setters
     int getId() const;

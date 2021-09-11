@@ -7,6 +7,7 @@
 #include "gamestats.h"
 #include "unitmover.h"
 #include "gameprocessor.h"
+#include "aiprocessor.h"
 #include "tipslabel.h"
 #include "unitselectionwidget.h"
 #include "descriptionwidget.h"
@@ -40,6 +41,7 @@ public:
 public slots:
     void updateAll();
     void resetMedia(QMediaPlayer::State);
+    void initializeSide(int);
 
 private:
     Ui::GameWidget *ui;
@@ -59,7 +61,8 @@ private:
     QMenu *m_mainContextMenu;    // Main context menu
 
     // Game engine
-    GameProcessor *m_processer;  // Game processer
+    GameProcessor *m_processor;  // Game processor
+    AIProcessor **m_ai;           // Game AI Processors
 
     // Sound effects
     QMediaPlayer *m_mediaPlayer; // bgm player
@@ -68,6 +71,7 @@ private:
 
     // Mouse events related
     QPoint m_pDragBeginPoint;    // Start point of dragging
+    bool m_bMouseEventConnected; // Whether mouse events are received
 
     // Timer
     QTimer *m_graphicsTimer;     // Timer: update screen graphics
@@ -81,6 +85,8 @@ signals:
     void mouseMiddleButtonMoved(QPoint);
     void mouseMoved(QPoint);
     void mouseScrolled(int, QPointF);
+
+    void AIFinished();
 
     void windowClosed();
 };

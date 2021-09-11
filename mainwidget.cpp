@@ -11,6 +11,7 @@ MainWidget::MainWidget(QWidget *parent)
       ui(new Ui::MainWidget),
       m_gameWidget(nullptr),
       m_settingsWidget(nullptr),
+      m_gameModeWidget(nullptr),
       m_nTranslatorId(1),
       m_bStopped(false)
 
@@ -60,7 +61,7 @@ MainWidget::MainWidget(QWidget *parent)
     m_bgMusic->play();
 
     // Connect signals to slots
-    connect(ui->playButton, &QPushButton::clicked, this, &MainWidget::showGame);
+    connect(ui->playButton, &QPushButton::clicked, this, &MainWidget::showGameMode);
     connect(ui->settingsButton, &QPushButton::clicked, this, &MainWidget::showSettings);
     connect(ui->languageButton, &QPushButton::clicked, this, &MainWidget::retranslate);
     connect(ui->exitButton, &QPushButton::clicked, this, &MainWidget::close);
@@ -106,6 +107,7 @@ void MainWidget::retranslate()
 
 void MainWidget::showGame()
 {
+    qDebug() << m_settings->m_bAI;
     m_gameWidget = new GameWidget(m_settings, this);
     connect(m_gameWidget, &GameWidget::windowClosed, this, &MainWidget::returnToMenu);
     ui->menuWidget->hide();
@@ -116,9 +118,21 @@ void MainWidget::showGame()
     m_bgMusic->stop();
 }
 
+void MainWidget::showGameMode()
+{
+    m_gameModeWidget = new GameModeWidget(m_settings, this);
+    m_gameModeWidget->setAttribute(Qt::WA_DeleteOnClose, true);
+    connect(m_gameModeWidget, &GameModeWidget::windowClosed, this, &MainWidget::returnToMenu);
+    connect(m_gameModeWidget, &GameModeWidget::startGame, this, &MainWidget::showGame);
+    ui->menuWidget->hide();
+    ui->mainLayout->addWidget(m_gameModeWidget);
+    m_gameModeWidget->show();
+}
+
 void MainWidget::showSettings()
 {
     m_settingsWidget = new SettingsWidget(m_settings, this);
+    m_settingsWidget->setAttribute(Qt::WA_DeleteOnClose, true);
     connect(m_settingsWidget, &SettingsWidget::windowClosed, this, &MainWidget::returnToMenu);
     ui->menuWidget->hide();
     ui->mainLayout->addWidget(m_settingsWidget);

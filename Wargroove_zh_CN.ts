@@ -254,8 +254,145 @@
     </message>
     <message>
         <location filename="gameinfo.cpp" line="46"/>
-        <source>Base</source>
+        <source>Stronghold</source>
         <translation>大本营</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="70"/>
+        <source>Basic infantry, useful for capturing structures.</source>
+        <translation>基础步兵单位，可用于占领建筑。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="71"/>
+        <source>A quick unit.</source>
+        <translation>行动快速的陆兵单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="72"/>
+        <source>Slower, more powerful infantry.</source>
+        <translation>行动较慢，但威力较大的步兵单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="73"/>
+        <source>A powerful unit built to combat air threats.</source>
+        <translation>威力较大的步兵单位，可用于对抗空中军队单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="74"/>
+        <source>Ranged ground units able to move and attack in the same turn.</source>
+        <translation>可进行远程攻击的步兵单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="75"/>
+        <source>An immensely powerful unit, especially during critical hits.</source>
+        <oldsource>An immensely powerful unit.</oldsource>
+        <translation>威力巨大的步兵单位，有很高的暴击伤害。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="76"/>
+        <source>Powerful, mobile ground unit.</source>
+        <translation>攻击力、移动能力较强的地面军队单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="77"/>
+        <source>Capable of quickly transporting units that would otherwise travel by foot.</source>
+        <translation>能快速转移步兵单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="78"/>
+        <source>Ranged ground to air unit, unable to move and attack in the same turn.</source>
+        <translation>具有特定的攻击范围，能应对各种军队单位，尤其是空中部队。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="79"/>
+        <source>Powerful long range unit, unable to move and attack in the same turn.</source>
+        <translation>威力巨大的远程攻击单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="81"/>
+        <source>Aircraft able to transport all ground units.</source>
+        <translation>能移动陆兵单位的飞行工具。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="82"/>
+        <source>Immensely mobile units, useful for crossing enemy lines.</source>
+        <translation>移动能力极强的飞行单位，可用于穿越敌军的兵线。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="83"/>
+        <source>Air-to-air unit, able to create huge damage during critical hits.</source>
+        <translation>空对空军队单位，有很高的暴击伤害。</translation>
+    </message>
+    <message>
+        <source>Air-to-air unit.</source>
+        <translation type="vanished">空对空军队单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="84"/>
+        <source>Incredibly powerful air-to-ground unit, especially during critical hits.</source>
+        <oldsource>Incredibly powerful air-to-ground unit.</oldsource>
+        <translation>空对地单位，威力巨大，有很高的暴击伤害。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="86"/>
+        <source>Boats able to transport all ground units across water.</source>
+        <translation>能够帮助地面单位度过水域。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="87"/>
+        <source>Powerful naval unit, built to conquer the water.</source>
+        <translation>攻击力强的水军单位，用来征服水中的建筑。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="88"/>
+        <source>Ranged water unit, able to attack air and sea.</source>
+        <oldsource>Ranged water unit, able to attack air and sea. Critical hit when in reef.</oldsource>
+        <translation>仅能远程攻击空中与水下单位的水军单位，对空有奇效。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="89"/>
+        <source>An immensely powerful long range unit.</source>
+        <oldsource>An immensely powerful long range unit. Critical hit when on beach.</oldsource>
+        <translation>威力巨大的远程水军单位，无法应对空中单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="94"/>
+        <source>Most powerful ground unit type. Having no commanders results in a loss.</source>
+        <translation>威力最大的陆兵单位，有很高的暴击伤害。失去所有指挥官会导致游戏失败。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="99"/>
+        <source>Special buildings which cannot be captured. Losing it results in a loss.</source>
+        <translation>特殊的建筑，无法被敌方占领。被攻占意味着游戏失败。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="100"/>
+        <source>Produces Land Units.</source>
+        <translation>可以雇佣陆兵单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="101"/>
+        <source>Produces Air Units.</source>
+        <translation>可以雇佣空军单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="102"/>
+        <source>Produces Naval Units.</source>
+        <translation>可以雇佣水军单位。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="103"/>
+        <source>The primary building type, able to generate income for players.</source>
+        <translation>基础建筑，能够提供稳定收入。</translation>
+    </message>
+    <message>
+        <location filename="gameinfo.cpp" line="104"/>
+        <source>Functionally identical to Villages, but are positioned within water tiles.</source>
+        <translation>位于水中，与村庄有同样的功能。</translation>
+    </message>
+    <message>
+        <source>Base</source>
+        <translation type="vanished">大本营</translation>
     </message>
     <message>
         <location filename="gameinfo.cpp" line="47"/>
@@ -334,59 +471,107 @@
     </message>
 </context>
 <context>
+    <name>GameModeWidget</name>
+    <message>
+        <location filename="gamemodewidget.ui" line="14"/>
+        <source>Form</source>
+        <translation>表格</translation>
+    </message>
+    <message>
+        <location filename="gamemodewidget.ui" line="81"/>
+        <source>Choose a Map</source>
+        <translation>选择地图</translation>
+    </message>
+    <message>
+        <location filename="gamemodewidget.ui" line="129"/>
+        <source>Single Player</source>
+        <translation>单人游戏</translation>
+    </message>
+    <message>
+        <location filename="gamemodewidget.ui" line="136"/>
+        <source>Multiplayer</source>
+        <translation>双人游戏</translation>
+    </message>
+    <message>
+        <location filename="gamemodewidget.ui" line="169"/>
+        <source>Back</source>
+        <translation>返回</translation>
+    </message>
+</context>
+<context>
     <name>GameProcessor</name>
     <message>
-        <location filename="gameprocessor.cpp" line="53"/>
+        <location filename="gameprocessor.cpp" line="58"/>
         <source>Get in</source>
         <translation>运载</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="54"/>
+        <location filename="gameprocessor.cpp" line="59"/>
         <source>Get out</source>
         <translation>卸下</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="55"/>
+        <location filename="gameprocessor.cpp" line="60"/>
         <source>Capture</source>
         <translation>占领</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="56"/>
+        <location filename="gameprocessor.cpp" line="61"/>
         <source>Attack</source>
         <translation>攻击</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="57"/>
+        <location filename="gameprocessor.cpp" line="62"/>
         <source>Wait</source>
         <translation>等待</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="58"/>
         <location filename="gameprocessor.cpp" line="63"/>
+        <location filename="gameprocessor.cpp" line="68"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="60"/>
+        <location filename="gameprocessor.cpp" line="65"/>
         <source>End turn</source>
         <translation>结束回合</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="61"/>
+        <location filename="gameprocessor.cpp" line="66"/>
         <source>Overview</source>
         <translation>概览</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="62"/>
+        <location filename="gameprocessor.cpp" line="67"/>
         <source>Exit game</source>
         <translation>退出</translation>
+    </message>
+    <message>
+        <location filename="gameprocessor.cpp" line="648"/>
+        <source>Game over! You win! </source>
+        <translation>游戏结束，你赢了! </translation>
+    </message>
+    <message>
+        <location filename="gameprocessor.cpp" line="671"/>
+        <source>Game over! You lose! </source>
+        <translation>游戏结束，你输了! </translation>
+    </message>
+    <message>
+        <location filename="gameprocessor.cpp" line="891"/>
+        <source>Round </source>
+        <translation>回合 </translation>
+    </message>
+    <message>
+        <location filename="gameprocessor.cpp" line="892"/>
+        <source>: Side </source>
+        <translation>: 玩家 </translation>
     </message>
     <message>
         <source>Settings</source>
         <translation type="vanished">设置</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="848"/>
+        <location filename="gameprocessor.cpp" line="913"/>
         <source>Map Scale: </source>
         <translation>地图缩放比例: </translation>
     </message>
@@ -399,7 +584,14 @@
         <translation>游戏窗口</translation>
     </message>
     <message>
-        <location filename="gamewidget.cpp" line="40"/>
+        <location filename="gamewidget.ui" line="50"/>
+        <location filename="gamewidget.ui" line="60"/>
+        <location filename="gamewidget.ui" line="123"/>
+        <source>TextLabel</source>
+        <translation>内容</translation>
+    </message>
+    <message>
+        <location filename="gamewidget.cpp" line="43"/>
         <source>Here are the tips. </source>
         <translation>此处显示提示。 </translation>
     </message>
@@ -413,7 +605,8 @@
     </message>
     <message>
         <location filename="mainwidget.ui" line="116"/>
-        <source>Play</source>
+        <source>Play Game</source>
+        <oldsource>Play</oldsource>
         <translation>开始游戏</translation>
     </message>
     <message>
@@ -453,40 +646,48 @@
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="73"/>
-        <location filename="settingswidget.ui" line="93"/>
-        <location filename="settingswidget.ui" line="119"/>
-        <location filename="settingswidget.ui" line="192"/>
+        <location filename="settingswidget.ui" line="136"/>
+        <location filename="settingswidget.ui" line="152"/>
+        <location filename="settingswidget.ui" line="261"/>
+        <location filename="settingswidget.ui" line="300"/>
         <source>TextLabel</source>
         <translation>内容</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="83"/>
+        <location filename="settingswidget.ui" line="197"/>
+        <source>Music Volume</source>
+        <translation>音乐音量</translation>
+    </message>
+    <message>
+        <location filename="settingswidget.ui" line="271"/>
         <source>Initial Block Size</source>
         <translation>初始地块大小</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="129"/>
+        <location filename="settingswidget.ui" line="313"/>
+        <source>Tips: Suggested Refresh Time not lower than 15.</source>
+        <translation>注意：屏幕刷新时间不建议超过15。</translation>
+    </message>
+    <message>
+        <location filename="settingswidget.ui" line="184"/>
         <source>Refresh Time</source>
         <translation>屏幕刷新时间</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="139"/>
         <source>Volume</source>
-        <translation>音乐音量</translation>
+        <translation type="vanished">音乐音量</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="172"/>
+        <location filename="settingswidget.ui" line="226"/>
         <source>Sound Effect</source>
         <translation>音效音量</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="216"/>
         <source>Map</source>
-        <translation>地图</translation>
+        <translation type="vanished">地图</translation>
     </message>
     <message>
-        <location filename="settingswidget.ui" line="261"/>
+        <location filename="settingswidget.ui" line="348"/>
         <source>Back</source>
         <translation>返回</translation>
     </message>
