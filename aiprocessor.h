@@ -25,13 +25,41 @@ public:
 
     void paint(QPainter *painter);
 
+    // Inner struct, used in choosing blocks
+    struct BlockValue
+    {
+        Block *block;
+        Block *lastBlock;
+        Block *confrontingBlock;
+        int distance;
+        int value;
+    };
+
+    // Get accessible blocks from the given block
+    void getAccessibleBlocks(QVector<BlockValue> &accessibleBlocks, Block *block, int unitType, int movement);
+
+    // Add attack points to each accessible block
+    // Detail: Point is given according to the opponent unit which offers the greatest point
+    // (because you can only attack once in a round)
+    void updateAttackPoints(QVector<BlockValue> &accessibleBlocks, Unit *unit);
+
+    // Add defence points to each accessible block
+    // Detail: Point is given according to the terrain defence and how many enemy units around
+    void updateDefencePoints(QVector<BlockValue> &accessibleBlocks, Unit *unit);
+
+    // If the unit isn't able to attack, find the shortest path to an enemy unit, save it in accessible blocks
+    // The block with the most distance lower than movement is given a value 1000 to stand out
+    void updateNearbyBlocks(QVector<BlockValue> &accessibleBlocks, Block *block, int unitType, int movement);
+
     void moveSingleUnit(Block *block);
     void operateBuilding(Block *block);
+    void createUnit(int unitId, int side);
 
 public slots:
     void activate();
     void nextMove();
     void confrontUnit();
+    void finishRound();
 
 private:
     // Game stats

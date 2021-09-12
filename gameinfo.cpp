@@ -91,12 +91,12 @@ GameInfo::GameInfo(QObject *parent)
 
     m_sCommanderDescription = QStringList
     {
-        tr("Most powerful ground unit type. Having no commanders results in a loss.")
+        tr("Most powerful ground unit type. Having no commanders may result in a loss.")
     };
 
     m_sBuildingDescription = QStringList
     {
-        tr("Special buildings which cannot be captured. Losing it results in a loss."),
+        tr("Special buildings which cannot be captured. Losing it may result in a loss."),
         tr("Produces Land Units."),
         tr("Produces Air Units."),
         tr("Produces Naval Units."),

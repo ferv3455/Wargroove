@@ -483,17 +483,22 @@
         <translation>选择地图</translation>
     </message>
     <message>
-        <location filename="gamemodewidget.ui" line="129"/>
+        <location filename="gamemodewidget.ui" line="109"/>
+        <source>Fog Mode (Limited Sight)</source>
+        <translation>浓雾模式（视野受限）</translation>
+    </message>
+    <message>
+        <location filename="gamemodewidget.ui" line="150"/>
         <source>Single Player</source>
         <translation>单人游戏</translation>
     </message>
     <message>
-        <location filename="gamemodewidget.ui" line="136"/>
+        <location filename="gamemodewidget.ui" line="160"/>
         <source>Multiplayer</source>
         <translation>双人游戏</translation>
     </message>
     <message>
-        <location filename="gamemodewidget.ui" line="169"/>
+        <location filename="gamemodewidget.ui" line="196"/>
         <source>Back</source>
         <translation>返回</translation>
     </message>
@@ -547,22 +552,24 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="648"/>
-        <source>Game over! You win! </source>
-        <translation>游戏结束，你赢了! </translation>
+        <location filename="gameprocessor.cpp" line="645"/>
+        <source>Game over! Side 1 win! </source>
+        <oldsource>Game over! You win! </oldsource>
+        <translation>游戏结束，玩家1赢了! </translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="671"/>
-        <source>Game over! You lose! </source>
-        <translation>游戏结束，你输了! </translation>
+        <location filename="gameprocessor.cpp" line="668"/>
+        <source>Game over! Side 2 win! </source>
+        <oldsource>Game over! You lose! </oldsource>
+        <translation>游戏结束，玩家2赢了! </translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="891"/>
+        <location filename="gameprocessor.cpp" line="888"/>
         <source>Round </source>
         <translation>回合 </translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="892"/>
+        <location filename="gameprocessor.cpp" line="889"/>
         <source>: Side </source>
         <translation>: 玩家 </translation>
     </message>
@@ -571,7 +578,7 @@
         <translation type="vanished">设置</translation>
     </message>
     <message>
-        <location filename="gameprocessor.cpp" line="913"/>
+        <location filename="gameprocessor.cpp" line="914"/>
         <source>Map Scale: </source>
         <translation>地图缩放比例: </translation>
     </message>

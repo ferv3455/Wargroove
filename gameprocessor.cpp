@@ -63,9 +63,8 @@ GameProcessor::GameProcessor(Settings *settings,
     m_actions[5] = new QAction(tr("Cancel"), this);
 
     m_mainActions[0] = new QAction(QPixmap(":/image/icon/groove").scaledToHeight(30), tr("End turn"), this);
-    m_mainActions[1] = new QAction(QPixmap(":/image/icon/rules").scaledToHeight(30), tr("Overview"), this);
-    m_mainActions[2] = new QAction(QPixmap(":/image/icon/control").scaledToHeight(30), tr("Exit game"), this);
-    m_mainActions[3] = new QAction(tr("Cancel"), this);
+    m_mainActions[1] = new QAction(QPixmap(":/image/icon/control").scaledToHeight(30), tr("Exit game"), this);
+    m_mainActions[2] = new QAction(tr("Cancel"), this);
 
     // Initialize pointer images
     for (int i = 0; i < 6; i++)
@@ -142,7 +141,7 @@ GameProcessor::GameProcessor(Settings *settings,
     {
         emit enterStage(16);            // Action: End turn
     });
-    connect(m_mainActions[2], &QAction::triggered, this, [ = ]()
+    connect(m_mainActions[1], &QAction::triggered, this, [ = ]()
     {
         emit gameClosed();              // Action: Exit game
     });
@@ -642,7 +641,7 @@ void GameProcessor::checkWin()
     if (!foundCommander && !foundStronghold)
     {
         // Check win
-        parent()->findChild<QLabel *>("gameOverLabel")->setText(tr("Game over! You win! "));
+        parent()->findChild<QLabel *>("gameOverLabel")->setText(tr("Game over! Side 1 win! "));
         emit enterStage(99);
         return;
     }
@@ -665,7 +664,7 @@ void GameProcessor::checkWin()
     if (!foundCommander && !foundStronghold)
     {
         // Check lose
-        parent()->findChild<QLabel *>("gameOverLabel")->setText(tr("Game over! You lose! "));
+        parent()->findChild<QLabel *>("gameOverLabel")->setText(tr("Game over! Side 2 win! "));
         emit enterStage(99);
         return;
     }
@@ -941,7 +940,6 @@ void GameProcessor::selectPosition(QPoint position)
                 m_mainContextMenu->addAction(m_mainActions[0]);
                 m_mainContextMenu->addAction(m_mainActions[1]);
                 m_mainContextMenu->addAction(m_mainActions[2]);
-                m_mainContextMenu->addAction(m_mainActions[3]);
                 m_mainContextMenu->exec(QCursor::pos());
                 break;
             }

@@ -93,7 +93,7 @@ private:
 
     // Menu actions
     QAction *m_actions[6];              // Get in, Get out, Capture, Attack, Wait, Cancel
-    QAction *m_mainActions[4];          // End turn, overview, mission, cancel
+    QAction *m_mainActions[3];          // End turn, exit, cancel
 
     // Pointer images
     QImage m_pointerImage[6];           // Block highlights
