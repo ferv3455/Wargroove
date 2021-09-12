@@ -8,6 +8,7 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
       m_settings(settings),
       m_map(map),
       m_nCurrentMove(0),
+      m_bVisible(true),
       m_movingBlock{nullptr, nullptr},
       m_bMoving(false),
       m_movingUnit(nullptr),
@@ -24,7 +25,7 @@ UnitMover::UnitMover(Settings *settings, Map *map, QObject *parent)
 void UnitMover::paint(QPainter *painter) const
 {
     painter->setPen(Qt::white);
-    if (m_bMoving)
+    if (m_bMoving && m_bVisible)
     {
         QPoint pos[2] = {m_movingBlock[0]->getCenter(), m_movingBlock[1]->getCenter()};
         QPoint center = (pos[0] * (m_nTotalMoves - m_nCurrentMove) +
@@ -45,6 +46,7 @@ void UnitMover::moveUnit(Block *fromBlock, Block *toBlock)
 
     m_movingBlock[0] = fromBlock;
     m_movingBlock[1] = toBlock;
+    m_bVisible = fromBlock->isVisible() || toBlock->isVisible();
     m_movingUnit->setDirection(toBlock->getCenter().x() < fromBlock->getCenter().x());
     m_nCurrentMove = 0;
 }

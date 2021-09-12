@@ -38,6 +38,7 @@ private:
     //      Single movement (step)
     int m_nTotalMoves;
     int m_nCurrentMove;
+    bool m_bVisible;
     Block *m_movingBlock[2];
 
     //      Route movement

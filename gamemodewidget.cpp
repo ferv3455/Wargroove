@@ -9,6 +9,9 @@ GameModeWidget::GameModeWidget(Settings *settings, QWidget *parent) :
     // Initialize ui
     ui->setupUi(this);
 
+    // Initialize checkbox
+    ui->fogCheckBox->setChecked(m_settings->m_bFogMode);
+
     // Initialize menu
     for (const auto &mapName : qAsConst(m_settings->m_mapNames))
     {
@@ -17,6 +20,10 @@ GameModeWidget::GameModeWidget(Settings *settings, QWidget *parent) :
     ui->mapComboBox->setCurrentIndex(m_settings->m_nCurrentMap);
 
     // Connect signals and slots
+    connect(ui->fogCheckBox, &QCheckBox::stateChanged, this, [ = ]()
+    {
+        m_settings->m_bFogMode = ui->fogCheckBox->isChecked();
+    });
     connect(ui->singlePlayerButton, &QPushButton::clicked, this, [ = ]()
     {
         m_settings->m_bAI = true;

@@ -228,6 +228,7 @@ void GameWidget::initializeSide(int side)
                 connect(this, &GameWidget::mouseMoved, m_processor, &GameProcessor::mouseToPosition);
                 connect(this, &GameWidget::mouseScrolled, m_processor, &GameProcessor::zoomMap);
             }
+            m_processor->activate();
         }
         else
         {
@@ -257,5 +258,6 @@ void GameWidget::initializeSide(int side)
             connect(this, &GameWidget::mouseMoved, m_processor, &GameProcessor::mouseToPosition);
             connect(this, &GameWidget::mouseScrolled, m_processor, &GameProcessor::zoomMap);
         }
+        m_processor->activate();
     }
 }

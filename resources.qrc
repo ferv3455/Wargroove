@@ -16,6 +16,8 @@
         <file>image/bricks_background.png</file>
         <file>Main_logo.png</file>
         <file>wargroove-bg.png</file>
+        <file>image/switch-off.png</file>
+        <file>image/switch-on.png</file>
     </qresource>
     <qresource prefix="/image/unit">
         <file alias="0">image/unit/soldier.png</file>

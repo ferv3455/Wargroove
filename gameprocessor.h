@@ -55,11 +55,13 @@ public:
     // the interaction of two units (battle/get in/get out)
     void confrontUnit();
 
+    // Check game over conditions
     void checkWin();
 
 public slots:
     void processStage(int);
     void changeSide();
+    void activate();
 
     void moveMap(QPoint);
     void zoomMap(int, QPointF);

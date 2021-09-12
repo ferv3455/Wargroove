@@ -146,9 +146,6 @@ GameProcessor::GameProcessor(Settings *settings,
     {
         emit gameClosed();              // Action: Exit game
     });
-
-    // Initialize stage
-    processStage(0);
 }
 
 void GameProcessor::paint(QPainter *painter)
@@ -624,7 +621,7 @@ void GameProcessor::confrontUnit()
 
 void GameProcessor::checkWin()
 {
-    qDebug() << m_stats->getUnits(0).size() << m_stats->getUnits(1).size();
+    qDebug() << "side 1" << m_stats->getUnits(0).size() << "side 2" << m_stats->getUnits(1).size();
 
     // Check commanders and strongholds
     bool foundCommander = false;
@@ -880,7 +877,7 @@ void GameProcessor::processStage(int stage)
 
 void GameProcessor::changeSide()
 {
-    qDebug() << "=============Round" << m_nRound << "Side" << m_nMovingSide << "finished===============";
+    qDebug() << "=============Round" << m_nRound << "Side" << m_nMovingSide + 1 << "finished===============";
     m_nMovingSide++;
     if (m_nMovingSide >= m_nTotalSides)
     {
@@ -890,8 +887,12 @@ void GameProcessor::changeSide()
 
     m_tipsLabel->popup(tr("Round ") + QString::number(m_nRound) +
                        tr(": Side ") + QString::number(m_nMovingSide + 1));
-    emit enterStage(0);
     emit roundForSide(m_nMovingSide);
+}
+
+void GameProcessor::activate()
+{
+    emit enterStage(0);
 }
 
 void GameProcessor::moveMap(QPoint deltaPos)

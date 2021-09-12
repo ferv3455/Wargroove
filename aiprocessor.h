@@ -25,9 +25,13 @@ public:
 
     void paint(QPainter *painter);
 
+    void moveSingleUnit(Block *block);
+    void operateBuilding(Block *block);
+
 public slots:
     void activate();
     void nextMove();
+    void confrontUnit();
 
 private:
     // Game stats
@@ -48,6 +52,8 @@ private:
     // AI processing related
     QVector<Block *> m_remainingBlocks; // Blocks that can be moved
     QVector<Block *> m_movingRoute;     // Moving route
+    Block *m_confrontingBlock;          // Confronting units
+    Unit *m_tempUnit;                   // Temporary unit used for generating units
 
     // Other members
     int m_nSide;                        // Side in the game
@@ -55,7 +61,6 @@ private:
 
 signals:
     void finished();
-
     void operationFinished();
 };
 
