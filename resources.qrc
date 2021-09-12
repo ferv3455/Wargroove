@@ -3,6 +3,8 @@
         <file alias="river_delta">maps/river_delta.map</file>
         <file alias="ai_test">maps/ai_test.map</file>
         <file alias="standard">maps/standard.map</file>
+        <file alias="lake">maps/lake.map</file>
+        <file alias="mountain">maps/mountain.map</file>
     </qresource>
     <qresource prefix="/gameinfo">
         <file>gameinfo/damage_matrix.txt</file>
@@ -125,6 +127,8 @@
         <file alias="river_delta">maps/river_delta_units.map</file>
         <file alias="standard">maps/standard_units.map</file>
         <file alias="ai_test">maps/ai_test_units.map</file>
+        <file alias="lake">maps/lake_units.map</file>
+        <file alias="mountain">maps/mountain_units.map</file>
     </qresource>
     <qresource prefix="/image/background">
         <file alias="5">image/biome/beach.png</file>

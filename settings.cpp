@@ -5,9 +5,9 @@ Settings::Settings(QObject *parent)
       m_nRefreshTime(15),                          // refresh time  WARNING: game might crash if too low
       m_nMoveSteps(4),                             // unit move steps
 
-      m_mapNames{"ai_test", "standard", "river_delta"},           // map names
-      m_mapSizes{QSize(20, 20), QSize(20, 20), QSize(50, 59)},    // map sizes (width, height)
-      m_nCurrentMap(0),                                           // current map
+      m_mapNames{"ai_test", "standard", "lake", "mountain", "river_delta"},           // map names
+      m_mapSizes{QSize(20, 20), QSize(20, 20), QSize(20, 20), QSize(20, 20), QSize(50, 59)}, // map sizes (width, height)
+      m_nCurrentMap(0),                            // current map
 
       m_nBlockSize(30),                            // initial size of a block
       m_nZoomScale(10),                            // scale change per scroll
